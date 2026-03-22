@@ -1,0 +1,20 @@
+Sviluppare e mantenere una web app professionale in Python e Streamlit per il calcolo dello scalzamento locale presso una pila da ponte in alveo.
+
+STANDARD DELLA SUITE
+- Tutta la logica di calcolo in `src.py`.
+- `app.py` contiene solo UI Streamlit, orchestrazione dei risultati e grafici.
+- Tutti i grafici devono essere realizzati esclusivamente con Plotly.
+- L’interfaccia deve essere interamente in italiano.
+
+REQUISITI FUNZIONALI MINIMI
+1. Input geometrici: larghezza `a`, lunghezza `L`, forma del naso, angolo di attacco.
+2. Input idraulici: tirante `y1`, velocità `V1`.
+3. Coefficienti: `K1`, `K2`, `K3`, `K4`, con opzione per K2 automatico.
+4. Formulazioni richieste: CSU / HEC-18; CSU / HEC-18 con limite round nose; formulazione fattoriale utente come placeholder estendibile.
+5. Output richiesti: tabella di confronto, `ys [m]`, `ys/a`, indicatori sintetici, grafici Plotly, download CSV.
+
+REQUISITI DI CODICE
+- usare dataclass per gli input;
+- separare chiaramente validazione, calcolo, metadata formule, report e sensitività;
+- usare un registry delle formule con nome, riferimento, nota tecnica e funzione associata;
+- non scrivere formule direttamente in `app.py`.
