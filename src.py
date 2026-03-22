@@ -733,7 +733,7 @@ def genera_pdf(dati: DatiPila, note: List[str]) -> bytes:
         pdf.multi_cell(0, 5, txt)
         pdf.ln(1)
 
-    return bytes(pdf.output())
+    return pdf.output()
 
 
 # ---------------------------------------------------------------------------
