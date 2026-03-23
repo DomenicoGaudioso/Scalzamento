@@ -1,5 +1,5 @@
 # Scalzamento
-
+![alt text](socialScalzamento.png)
 Web app professionale in **Python + Streamlit** per il **calcolo e il confronto dello scalzamento locale** presso una **pila da ponte in alveo**.
 
 Questa versione è pensata come **app pilota** della suite di strumenti per l’ingegneria idraulica: la struttura del codice, la UI, i grafici e la documentazione sono stati organizzati per costituire una base solida, estendibile e riutilizzabile in future implementazioni.
