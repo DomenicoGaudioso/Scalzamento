@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scalzamento — Documentazione Tecnica</title>
+<style>
+  :root {
+    --primary: #2962FF;
+    --primary-dark: #1a3fa0;
+    --primary-light: #e3f0ff;
+    --accent: #ff6d00;
+    --gray-900: #212121;
+    --gray-700: #424242;
+    --gray-500: #757575;
+    --gray-300: #e0e0e0;
+    --gray-100: #f5f5f5;
+    --white: #ffffff;
+    --ok: #2e7d32;
+    --warn: #f57f17;
+    --danger: #c62828;
+    --info: #1565c0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--gray-900); background: var(--gray-100); line-height: 1.7; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+  header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--white); padding: 40px 0; text-align: center; border-radius: 0 0 24px 24px; margin-bottom: 30px; }
+  header h1 { font-size: 2.4em; margin-bottom: 8px; }
+  header p { font-size: 1.1em; opacity: .9; }
+  nav { background: var(--white); border-radius: 12px; padding: 20px 28px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+  nav h2 { color: var(--primary); margin-bottom: 12px; font-size: 1.15em; }
+  nav ul { list-style: none; columns: 2; }
+  nav li { margin-bottom: 6px; }
+  nav a { color: var(--primary); text-decoration: none; font-weight: 500; transition: color .2s; }
+  nav a:hover { color: var(--accent); text-decoration: underline; }
+  section { background: var(--white); border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+  section h2 { color: var(--primary); border-bottom: 3px solid var(--primary-light); padding-bottom: 10px; margin-bottom: 18px; font-size: 1.6em; }
+  section h3 { color: var(--primary-dark); margin: 20px 0 10px; font-size: 1.25em; }
+  section h4 { color: var(--gray-700); margin: 14px 0 6px; font-size: 1.05em; }
+  .formula { background: var(--gray-100); border-left: 4px solid var(--primary); padding: 14px 18px; margin: 14px 0; font-family: 'Cambria Math', 'Latin Modern Math', serif; font-size: 1.1em; border-radius: 0 8px 8px 0; overflow-x: auto; }
+  .formula-inline { font-family: 'Cambria Math', serif; font-style: italic; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 20px; font-size: .95em; }
+  th { background: var(--primary); color: var(--white); padding: 10px 14px; text-align: left; }
+  td { padding: 8px 14px; border-bottom: 1px solid var(--gray-300); }
+  tr:nth-child(even) { background: var(--gray-100); }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: .82em; font-weight: 600; }
+  .badge-ok { background: #c8e6c9; color: var(--ok); }
+  .badge-warn { background: #fff9c4; color: var(--warn); }
+  .badge-danger { background: #ffcdd2; color: var(--danger); }
+  .badge-info { background: #bbdefb; color: var(--info); }
+  .svg-container { text-align: center; margin: 20px 0; overflow-x: auto; }
+  .note-box { background: var(--primary-light); border-left: 4px solid var(--primary); padding: 12px 16px; margin: 14px 0; border-radius: 0 8px 8px 0; }
+  .warning-box { background: #fff8e1; border-left: 4px solid var(--accent); padding: 12px 16px; margin: 14px 0; border-radius: 0 8px 8px 0; }
+  ul, ol { margin-left: 22px; margin-bottom: 10px; }
+  li { margin-bottom: 4px; }
+  .param-table td:first-child { font-weight: 600; white-space: nowrap; }
+  footer { text-align: center; padding: 20px; color: var(--gray-500); font-size: .9em; }
+  @media (max-width: 768px) {
+    nav ul { columns: 1; }
+    header h1 { font-size: 1.6em; }
+    section { padding: 18px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header>
+  <h1>Scalzamento Locale — Pila da Ponte</h1>
+  <p>Documentazione Tecnica &middot; Software professionale per il calcolo dello scalzamento locale</p>
+  <p style="margin-top:8px;font-size:.85em;opacity:.7;">CSU/HEC-18 &middot; Melville &amp; Coleman (2000) &middot; Clear-water / Live-bed &middot; Verifiche normative</p>
+</header>
+
+<div class="container">
+
+<!-- ============ INDICE ============ -->
+<nav>
+  <h2>&#128214; Indice</h2>
+  <ul>
+    <li><a href="#intro">1. Introduzione</a></li>
+    <li><a href="#flowchart">2. Diagramma di flusso del calcolo</a></li>
+    <li><a href="#formulazioni">3. Formulazioni implementate</a></li>
+    <li><a href="#coeff">4. Coefficienti CSU/HEC-18</a></li>
+    <li><a href="#regime">5. Classificazione del regime di trasporto</a></li>
+    <li><a href="#verifiche">6. Verifiche normative</a></li>
+    <li><a href="#sensibilita">7. Analisi di sensitivit&agrave;</a></li>
+    <li><a href="#report">8. Report e output</a></li>
+    <li><a href="#guida">9. Guida all&rsquo;uso</a></li>
+    <li><a href="#riferimenti">10. Riferimenti bibliografici</a></li>
+  </ul>
+</nav>
+
+<!-- ============ 1. INTRODUZIONE ============ -->
+<section id="intro">
+  <h2>1. Introduzione</h2>
+  <p><strong>Scalzamento</strong> &egrave; una web app professionale in Python + Streamlit per il calcolo e il confronto della profondit&agrave; di scalzamento locale presso una pila da ponte in alveo.</p>
+  <p>L&rsquo;app implementa le principali formulazioni internazionali per lo scalzamento locale e fornisce strumenti di analisi comparativa, sensitivit&agrave; e verifica normativa.</p>
+
+  <h3>Funzionalit&agrave; principali</h3>
+  <ul>
+    <li>Calcolo dello scalzamento secondo 4 formulazioni: CSU/HEC-18, CSU/HEC-18 con limite round nose, Melville &amp; Coleman (2000), metodo fattoriale utente</li>
+    <li>Classificazione automatica del regime di trasporto (clear-water / live-bed)</li>
+    <li>Calcolo automatico del coefficiente K2 e della velocit&agrave; critica V<sub>c</sub></li>
+    <li>Verifiche normative tabellari con soglie e riferimenti</li>
+    <li>Analisi di sensitivit&agrave; rispetto a velocit&agrave; e tirante</li>
+    <li>Report PDF e Word completi con passaggi di calcolo passo per passo</li>
+    <li>Export CSV di risultati e curve parametriche</li>
+    <li>Salvataggio e caricamento parametri in formato JSON</li>
+  </ul>
+
+  <h3>Struttura del progetto</h3>
+  <table>
+    <tr><th>File</th><th>Contenuto</th></tr>
+    <tr><td><code>src.py</code></td><td>Logica di calcolo (formule, validazione, report, PDF)</td></tr>
+    <tr><td><code>app.py</code></td><td>Interfaccia utente Streamlit</td></tr>
+    <tr><td><code>scalzamento_word.py</code></td><td>Generazione report Word (.docx)</td></tr>
+    <tr><td><code>requirements.txt</code></td><td>Dipendenze Python</td></tr>
+  </table>
+</section>
+
+<!-- ============ 2. DIAGRAMMA DI FLUSSO ============ -->
+<section id="flowchart">
+  <h2>2. Diagramma di flusso del calcolo</h2>
+  <p>Il diagramma seguente illustra il processo completo di calcolo, dall&rsquo;input dei dati alla generazione del report finale.</p>
+
+  <div class="svg-container">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 720" style="max-width:900px;width:100%;height:auto;">
+      <!-- Background -->
+      <rect x="0" y="0" width="900" height="720" fill="#f8faff" rx="12"/>
+
+      <!-- Title -->
+      <text x="450" y="32" text-anchor="middle" font-size="18" font-weight="bold" fill="#2962FF">Flusso di calcolo — Scalzamento Locale</text>
+
+      <!-- INPUT -->
+      <rect x="30" y="55" width="200" height="130" rx="10" fill="#e3f0ff" stroke="#2962FF" stroke-width="2"/>
+      <text x="130" y="78" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a3fa0">INPUT</text>
+      <text x="45" y="100" font-size="12" fill="#424242">• Geometria pila (a, L, forma, θ)</text>
+      <text x="45" y="118" font-size="12" fill="#424242">• Idraulica (y₁, V₁)</text>
+      <text x="45" y="136" font-size="12" fill="#424242">• Sedimento (D₅₀, Ss)</text>
+      <text x="45" y="154" font-size="12" fill="#424242">• Coefficienti (K1, K2, K3, K4)</text>
+      <text x="45" y="172" font-size="12" fill="#424242">• K_total (fattoriale)</text>
+
+      <!-- Arrow 1 -->
+      <line x1="230" y1="120" x2="280" y2="120" stroke="#2962FF" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- VALIDAZIONE -->
+      <rect x="280" y="70" width="170" height="100" rx="10" fill="#fff9c4" stroke="#f57f17" stroke-width="2"/>
+      <text x="365" y="95" text-anchor="middle" font-size="13" font-weight="bold" fill="#e65100">VALIDAZIONE</text>
+      <text x="295" y="115" font-size="11" fill="#424242">• a &gt; 0, L &gt; 0, y₁ &gt; 0</text>
+      <text x="295" y="133" font-size="11" fill="#424242">• 0 ≤ θ ≤ 90°</text>
+      <text x="295" y="151" font-size="11" fill="#424242">• K_i &gt; 0, D₅₀ &gt; 0, Ss &gt; 1</text>
+
+      <!-- Arrow 2 -->
+      <line x1="450" y1="120" x2="500" y2="120" stroke="#2962FF" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- PARAMETRI IDRAULICI -->
+      <rect x="500" y="55" width="220" height="130" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+      <text x="610" y="78" text-anchor="middle" font-size="13" font-weight="bold" fill="#1b5e20">PARAMETRI DERIVATI</text>
+      <text x="515" y="100" font-size="11" fill="#424242">• Fr = V₁ / √(g·y₁)</text>
+      <text x="515" y="118" font-size="11" fill="#424242">• V_c = 6.19·y₁^(1/6)·D₅₀^(1/3)</text>
+      <text x="515" y="136" font-size="11" fill="#424242">• V/V_c → classificazione regime</text>
+      <text x="515" y="154" font-size="11" fill="#424242">• K2 automatico (se attivo)</text>
+      <text x="515" y="172" font-size="11" fill="#424242">• K_yb, K_I (Melville)</text>
+
+      <!-- Arrow down from PARAMETRI -->
+      <line x1="610" y1="185" x2="610" y2="220" stroke="#2962FF" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- DECISIONE REGIME -->
+      <polygon points="610,220 740,290 610,360 480,290" fill="#fff3e0" stroke="#ff6d00" stroke-width="2"/>
+      <text x="610" y="285" text-anchor="middle" font-size="13" font-weight="bold" fill="#e65100">V ≤ V_c ?</text>
+      <text x="610" y="302" text-anchor="middle" font-size="11" fill="#424242">Regime?</text>
+
+      <!-- CLEAR-WATER branch -->
+      <line x1="480" y1="290" x2="380" y2="290" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrowGreen)"/>
+      <text x="430" y="280" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">SÌ</text>
+
+      <rect x="230" y="240" width="150" height="100" rx="10" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+      <text x="305" y="265" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b5e20">CLEAR-WATER</text>
+      <text x="245" y="285" font-size="10" fill="#424242">Scalzamento progressivo</text>
+      <text x="245" y="300" font-size="10" fill="#424242">K3 = 1.1 (plane bed)</text>
+      <text x="245" y="315" font-size="10" fill="#424242">YS → equilibrio</text>
+      <text x="245" y="330" font-size="10" fill="#424242">K_I = V/V_c</text>
+
+      <!-- LIVE-BED branch -->
+      <line x1="740" y1="290" x2="770" y2="290" stroke="#c62828" stroke-width="2" marker-end="url(#arrowRed)"/>
+      <text x="755" y="280" text-anchor="middle" font-size="11" fill="#c62828" font-weight="bold">NO</text>
+
+      <rect x="770" y="240" width="120" height="100" rx="10" fill="#ffcdd2" stroke="#c62828" stroke-width="2"/>
+      <text x="830" y="265" text-anchor="middle" font-size="12" font-weight="bold" fill="#b71c1c">LIVE-BED</text>
+      <text x="780" y="285" font-size="10" fill="#424242">Trasporto attivo</text>
+      <text x="780" y="300" font-size="10" fill="#424242">K3 = 1.1÷1.3</text>
+      <text x="780" y="315" font-size="10" fill="#424242">YS dinamico</text>
+      <text x="780" y="330" font-size="10" fill="#424242">K_I = 1.0</text>
+
+      <!-- Arrow from both branches down to FORMULE -->
+      <line x1="305" y1="340" x2="305" y2="400" stroke="#2962FF" stroke-width="2"/>
+      <line x1="830" y1="340" x2="830" y2="370" stroke="#2962FF" stroke-width="2"/>
+      <line x1="305" y1="370" x2="830" y2="370" stroke="#2962FF" stroke-width="2"/>
+      <line x1="450" y1="370" x2="450" y2="400" stroke="#2962FF" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- FORMULE -->
+      <rect x="180" y="400" width="540" height="140" rx="10" fill="#e3f0ff" stroke="#2962FF" stroke-width="2"/>
+      <text x="450" y="425" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a3fa0">CALCOLO FORMULAZIONI</text>
+
+      <rect x="195" y="440" width="165" height="85" rx="6" fill="#fff" stroke="#2962FF" stroke-width="1"/>
+      <text x="277" y="460" text-anchor="middle" font-size="11" font-weight="bold" fill="#2962FF">CSU / HEC-18</text>
+      <text x="277" y="478" text-anchor="middle" font-size="10" fill="#424242">ys = 2·K1·K2·K3·K4</text>
+      <text x="277" y="493" text-anchor="middle" font-size="10" fill="#424242">·a^0.65·y₁^0.35·Fr^0.43</text>
+      <text x="277" y="515" text-anchor="middle" font-size="9" fill="#757575">+ limite round nose</text>
+
+      <rect x="375" y="440" width="165" height="85" rx="6" fill="#fff" stroke="#2962FF" stroke-width="1"/>
+      <text x="457" y="460" text-anchor="middle" font-size="11" font-weight="bold" fill="#2962FF">Melville &amp; Coleman</text>
+      <text x="457" y="478" text-anchor="middle" font-size="10" fill="#424242">ys = 2·K_yb·K_I·a</text>
+      <text x="457" y="493" text-anchor="middle" font-size="10" fill="#424242">K_yb = f(y₁/a)</text>
+      <text x="457" y="515" text-anchor="middle" font-size="9" fill="#757575">K_I = min(1, V/V_c)</text>
+
+      <rect x="555" y="440" width="150" height="85" rx="6" fill="#fff" stroke="#2962FF" stroke-width="1"/>
+      <text x="630" y="460" text-anchor="middle" font-size="11" font-weight="bold" fill="#2962FF">Fattoriale utente</text>
+      <text x="630" y="478" text-anchor="middle" font-size="10" fill="#424242">ys = K_total · a</text>
+      <text x="630" y="493" text-anchor="middle" font-size="10" fill="#757575">Placeholder estendibile</text>
+      <text x="630" y="515" text-anchor="middle" font-size="9" fill="#757575">Per calibrazione</text>
+
+      <!-- Arrow from FORMULE to VERIFICHE -->
+      <line x1="450" y1="540" x2="450" y2="575" stroke="#2962FF" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- VERIFICHE -->
+      <rect x="250" y="575" width="400" height="60" rx="10" fill="#fff9c4" stroke="#f57f17" stroke-width="2"/>
+      <text x="450" y="600" text-anchor="middle" font-size="13" font-weight="bold" fill="#e65100">VERIFICHE NORMATIVE</text>
+      <text x="450" y="618" text-anchor="middle" font-size="11" fill="#424242">10 verifiche con soglie, esiti e riferimenti</text>
+
+      <!-- Arrow -->
+      <line x1="450" y1="635" x2="450" y2="665" stroke="#2962FF" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- OUTPUT -->
+      <rect x="250" y="665" width="400" height="45" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+      <text x="450" y="693" text-anchor="middle" font-size="13" font-weight="bold" fill="#1b5e20">OUTPUT: Report, Grafici, CSV, PDF, Word</text>
+
+      <!-- Arrow markers -->
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#2962FF"/></marker>
+        <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#2e7d32"/></marker>
+        <marker id="arrowRed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#c62828"/></marker>
+      </defs>
+    </svg>
+  </div>
+
+  <h3>Schema del processo di scalzamento</h3>
+  <div class="svg-container">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" style="max-width:800px;width:100%;height:auto;">
+      <rect x="0" y="0" width="800" height="480" fill="#f8faff" rx="12"/>
+      <text x="400" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#2962FF">Schema &mdash; Parametri Idraulici → ys</text>
+
+      <!-- Input box -->
+      <rect x="20" y="55" width="180" height="200" rx="10" fill="#e3f0ff" stroke="#2962FF" stroke-width="2"/>
+      <text x="110" y="78" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a3fa0">Parametri Input</text>
+      <text x="35" y="100" font-size="11" fill="#424242">Geometria:</text>
+      <text x="35" y="118" font-size="11" fill="#424242">  a (larghezza pila)</text>
+      <text x="35" y="136" font-size="11" fill="#424242">  L (lunghezza pila)</text>
+      <text x="35" y="154" font-size="11" fill="#424242">  Forma del naso</text>
+      <text x="35" y="172" font-size="11" fill="#424242">  θ (angolo di attacco)</text>
+      <text x="35" y="195" font-size="11" fill="#424242">Idraulica:</text>
+      <text x="35" y="213" font-size="11" fill="#424242">  y₁ (tirante)</text>
+      <text x="35" y="231" font-size="11" fill="#424242">  V₁ (velocit&agrave;)</text>
+      <text x="35" y="249" font-size="11" fill="#424242">  D₅₀, Ss (sedimento)</text>
+
+      <!-- Derived params -->
+      <line x1="200" y1="155" x2="260" y2="155" stroke="#2962FF" stroke-width="2" marker-end="url(#arrow)"/>
+      <rect x="260" y="55" width="170" height="200" rx="10" fill="#fff9c4" stroke="#f57f17" stroke-width="2"/>
+      <text x="345" y="78" text-anchor="middle" font-size="13" font-weight="bold" fill="#e65100">Parametri Derivati</text>
+      <text x="275" y="100" font-size="11" fill="#424242">Fr = V₁/√(g·y₁)</text>
+      <text x="275" y="118" font-size="11" fill="#424242">a/y₁, L/a</text>
+      <text x="275" y="136" font-size="11" fill="#424242">V_c (velocit&agrave; critica)</text>
+      <text x="275" y="158" font-size="11" fill="#424242">K1 (forma naso)</text>
+      <text x="275" y="176" font-size="11" fill="#424242">K2 (angolo + L/a)</text>
+      <text x="275" y="194" font-size="11" fill="#424242">K3 (cond. fondo)</text>
+      <text x="275" y="212" font-size="11" fill="#424242">K4 (armoring)</text>
+      <text x="275" y="234" font-size="11" fill="#424242">K_yb, K_I (Melville)</text>
+      <text x="275" y="249" font-size="11" fill="#757575">Regime: CW / LB</text>
+
+      <!-- Formulas -->
+      <line x1="430" y1="155" x2="490" y2="155" stroke="#2962FF" stroke-width="2" marker-end="url(#arrow)"/>
+      <rect x="490" y="55" width="290" height="200" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+      <text x="635" y="78" text-anchor="middle" font-size="13" font-weight="bold" fill="#1b5e20">Formulazioni</text>
+
+      <rect x="505" y="90" width="260" height="30" rx="4" fill="#fff" stroke="#2e7d32" stroke-width="1"/>
+      <text x="635" y="110" text-anchor="middle" font-size="11" fill="#424242">CSU: ys = 2·K1·K2·K3·K4·a⁰·⁶⁵·y₁⁰·³⁵·Fr⁰·⁴³</text>
+
+      <rect x="505" y="130" width="260" height="30" rx="4" fill="#fff" stroke="#2e7d32" stroke-width="1"/>
+      <text x="635" y="150" text-anchor="middle" font-size="11" fill="#424242">CSU+limite: ys ≤ 2.4a (Fr≤0.8) o 3.0a</text>
+
+      <rect x="505" y="170" width="260" height="30" rx="4" fill="#fff" stroke="#2e7d32" stroke-width="1"/>
+      <text x="635" y="190" text-anchor="middle" font-size="11" fill="#424242">Melville: ys = 2·K_yb·K_I·a</text>
+
+      <rect x="505" y="210" width="260" height="30" rx="4" fill="#fff" stroke="#2e7d32" stroke-width="1"/>
+      <text x="635" y="230" text-anchor="middle" font-size="11" fill="#424242">Fattoriale: ys = K_total · a</text>
+
+      <!-- Output -->
+      <line x1="635" y1="255" x2="635" y2="290" stroke="#2962FF" stroke-width="2"/>
+      <line x1="110" y1="255" x2="110" y2="310" stroke="#2962FF" stroke-width="2"/>
+      <line x1="345" y1="255" x2="345" y2="310" stroke="#2962FF" stroke-width="2"/>
+      <line x1="110" y1="310" x2="635" y2="310" stroke="#2962FF" stroke-width="2"/>
+      <line x1="400" y1="310" x2="400" y2="340" stroke="#2962FF" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <rect x="220" y="340" width="360" height="120" rx="10" fill="#2962FF" stroke="#1a3fa0" stroke-width="2"/>
+      <text x="400" y="370" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">RISULTATO FINALE</text>
+      <text x="400" y="395" text-anchor="middle" font-size="12" fill="#e3f0ff">ys conservativo = max(tutte le formulazioni)</text>
+      <text x="400" y="415" text-anchor="middle" font-size="12" fill="#e3f0ff">Verifiche normative con esiti OK / ATTENZIONE / NON OK</text>
+      <text x="400" y="435" text-anchor="middle" font-size="12" fill="#e3f0ff">Report PDF, Word, CSV + Analisi di sensitivit&agrave;</text>
+    </svg>
+  </div>
+
+  <h3>Albero decisionale &mdash; Scelta della formula</h3>
+  <div class="svg-container">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 520" style="max-width:750px;width:100%;height:auto;">
+      <rect x="0" y="0" width="750" height="520" fill="#f8faff" rx="12"/>
+      <text x="375" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#2962FF">Albero Decisionale &mdash; Regime e Formula</text>
+
+      <!-- Start -->
+      <rect x="280" y="50" width="190" height="45" rx="22" fill="#2962FF" stroke="#1a3fa0" stroke-width="2"/>
+      <text x="375" y="78" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">Calcola V_c (HEC-18)</text>
+
+      <!-- Arrow to decision -->
+      <line x1="375" y1="95" x2="375" y2="130" stroke="#424242" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- Decision V vs V_c -->
+      <polygon points="375,130 530,200 375,270 220,200" fill="#fff9c4" stroke="#f57f17" stroke-width="2"/>
+      <text x="375" y="195" text-anchor="middle" font-size="14" font-weight="bold" fill="#e65100">V₁ ≤ V_c ?</text>
+      <text x="375" y="215" text-anchor="middle" font-size="11" fill="#424242">(Regime di trasporto)</text>
+
+      <!-- CLEAR-WATER path -->
+      <line x1="220" y1="200" x2="120" y2="200" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrowGreen)"/>
+      <text x="168" y="190" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">SÌ</text>
+
+      <rect x="20" y="160" width="100" height="80" rx="8" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+      <text x="70" y="185" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">CLEAR-WATER</text>
+      <text x="70" y="203" text-anchor="middle" font-size="10" fill="#424242">V/V_c ≤ 1</text>
+      <text x="70" y="220" text-anchor="middle" font-size="10" fill="#424242">K_I = V/V_c</text>
+      <text x="70" y="235" text-anchor="middle" font-size="10" fill="#424242">K3 = 1.1</text>
+
+      <!-- LIVE-BED path -->
+      <line x1="530" y1="200" x2="630" y2="200" stroke="#c62828" stroke-width="2" marker-end="url(#arrowRed)"/>
+      <text x="580" y="190" text-anchor="middle" font-size="11" fill="#c62828" font-weight="bold">NO</text>
+
+      <rect x="630" y="155" width="110" height="90" rx="8" fill="#ffcdd2" stroke="#c62828" stroke-width="2"/>
+      <text x="685" y="180" text-anchor="middle" font-size="11" font-weight="bold" fill="#b71c1c">LIVE-BED</text>
+      <text x="685" y="200" text-anchor="middle" font-size="10" fill="#424242">V/V_c &gt; 1</text>
+      <text x="685" y="218" text-anchor="middle" font-size="10" fill="#424242">K_I = 1.0</text>
+      <text x="685" y="236" text-anchor="middle" font-size="10" fill="#424242">K3 = 1.1÷1.3</text>
+
+      <!-- Arrow down from both -->
+      <line x1="70" y1="240" x2="70" y2="290" stroke="#424242" stroke-width="1.5"/>
+      <line x1="685" y1="245" x2="685" y2="290" stroke="#424242" stroke-width="1.5"/>
+      <line x1="70" y1="290" x2="685" y2="290" stroke="#424242" stroke-width="1.5"/>
+
+      <!-- Formula selection -->
+      <line x1="200" y1="290" x2="200" y2="320" stroke="#2962FF" stroke-width="2" marker-end="url(#arrow)"/>
+      <line x1="375" y1="290" x2="375" y2="320" stroke="#2962FF" stroke-width="2" marker-end="url(#arrow)"/>
+      <line x1="550" y1="290" x2="550" y2="320" stroke="#2962FF" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <text x="375" y="340" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a3fa0">SELEZIONE DELLA FORMULA</text>
+
+      <!-- CSU box -->
+      <rect x="60" y="360" width="180" height="70" rx="8" fill="#e3f0ff" stroke="#2962FF" stroke-width="1.5"/>
+      <text x="150" y="382" text-anchor="middle" font-size="12" font-weight="bold" fill="#2962FF">CSU / HEC-18</text>
+      <text x="150" y="400" text-anchor="middle" font-size="10" fill="#424242">Principale, K1-K4</text>
+      <text x="150" y="418" text-anchor="middle" font-size="10" fill="#424242">+ limite round nose</text>
+
+      <!-- Melville box -->
+      <rect x="270" y="360" width="180" height="70" rx="8" fill="#e3f0ff" stroke="#2962FF" stroke-width="1.5"/>
+      <text x="360" y="382" text-anchor="middle" font-size="12" font-weight="bold" fill="#2962FF">Melville &amp; Coleman</text>
+      <text x="360" y="400" text-anchor="middle" font-size="10" fill="#424242">K_yb · K_I · a</text>
+      <text x="360" y="418" text-anchor="middle" font-size="10" fill="#424242">Sensibile al regime</text>
+
+      <!-- Fattoriale box -->
+      <rect x="480" y="360" width="180" height="70" rx="8" fill="#e3f0ff" stroke="#2962FF" stroke-width="1.5"/>
+      <text x="570" y="382" text-anchor="middle" font-size="12" font-weight="bold" fill="#2962FF">Fattoriale utente</text>
+      <text x="570" y="400" text-anchor="middle" font-size="10" fill="#424242">ys = K_total · a</text>
+      <text x="570" y="418" text-anchor="middle" font-size="10" fill="#424242">Calibrazione/confronto</text>
+
+      <!-- Arrow to result -->
+      <line x1="150" y1="430" x2="150" y2="460" stroke="#424242" stroke-width="1.5"/>
+      <line x1="360" y1="430" x2="360" y2="460" stroke="#424242" stroke-width="1.5"/>
+      <line x1="570" y1="430" x2="570" y2="460" stroke="#424242" stroke-width="1.5"/>
+      <line x1="150" y1="460" x2="570" y2="460" stroke="#424242" stroke-width="1.5"/>
+      <line x1="360" y1="460" x2="360" y2="490" stroke="#2962FF" stroke-width="2"/>
+
+      <rect x="230" y="480" width="260" height="35" rx="17" fill="#2962FF" stroke="#1a3fa0" stroke-width="2"/>
+      <text x="360" y="503" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">ys_max = max(tutte le ys) [m]</text>
+
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#2962FF"/></marker>
+        <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#2e7d32"/></marker>
+        <marker id="arrowRed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#c62828"/></marker>
+      </defs>
+    </svg>
+  </div>
+</section>
+
+<!-- ============ 3. FORMULAZIONI ============ -->
+<section id="formulazioni">
+  <h2>3. Formulazioni implementate</h2>
+
+  <h3>3.1 CSU / HEC-18 (formula principale)</h3>
+  <p>La formula CSU (Colorado State University) &egrave; il metodo di riferimento dell&rsquo;HEC-18 (5&ordf; edizione, FHWA) per il calcolo dello scalzamento locale alle pile da ponte.</p>
+
+  <div class="formula">
+    y<sub>s</sub> = 2 &middot; K<sub>1</sub> &middot; K<sub>2</sub> &middot; K<sub>3</sub> &middot; K<sub>4</sub> &middot; a<sup>0.65</sup> &middot; y<sub>1</sub><sup>0.35</sup> &middot; Fr<sup>0.43</sup>
+  </div>
+
+  <table class="param-table">
+    <tr><th>Simbolo</th><th>Descrizione</th><th>Unit&agrave;</th><th>Range di validit&agrave;</th></tr>
+    <tr><td>y<sub>s</sub></td><td>Profondit&agrave; di scalzamento</td><td>m</td><td>&mdash;</td></tr>
+    <tr><td>K<sub>1</sub></td><td>Coefficiente forma naso della pila</td><td>&ndash;</td><td>0.9 &ndash; 1.1</td></tr>
+    <tr><td>K<sub>2</sub></td><td>Coefficiente angolo di attacco e rapporto L/a</td><td>&ndash;</td><td>1.0 &ndash; 4.0+</td></tr>
+    <tr><td>K<sub>3</sub></td><td>Coefficiente condizioni del fondo</td><td>&ndash;</td><td>1.1 &ndash; 1.3</td></tr>
+    <tr><td>K<sub>4</sub></td><td>Coefficiente armoring</td><td>&ndash;</td><td>0.4 &ndash; 1.0</td></tr>
+    <tr><td>a</td><td>Larghezza caratteristica della pila</td><td>m</td><td>&ge; 0.3 m</td></tr>
+    <tr><td>y<sub>1</sub></td><td>Tirante indisturbato a monte</td><td>m</td><td>&gt; 0</td></tr>
+    <tr><td>Fr</td><td>Numero di Froude = V<sub>1</sub> / &radic;(g &middot; y<sub>1</sub>)</td><td>&ndash;</td><td>&le; 0.95 (raccomandato)</td></tr>
+  </table>
+
+  <div class="warning-box">
+    <strong>Campo di validit&agrave; HEC-18:</strong> La formula &egrave; calibrata per 0.1 &le; a/y<sub>1</sub> &le; 9.4 e Fr &le; 0.95. Per valori fuori range, i risultati sono inaffidabili e devono essere usati con cautela.
+  </div>
+
+  <h3>3.2 CSU / HEC-18 con limite round nose</h3>
+  <p>Per pile a naso arrotondato allineate al flusso (θ = 0&deg;), l&rsquo;HEC-18 impone un limite superiore allo scalzamento:</p>
+  <div class="formula">
+    Se Fr &le; 0.8: y<sub>s</sub> &le; 2.4 &middot; a<br>
+    Se Fr &gt; 0.8: y<sub>s</sub> &le; 3.0 &middot; a
+  </div>
+  <p>Il limite si applica solo se la pila &egrave; a naso arrotondato e l&rsquo;angolo di attacco &egrave; praticamente nullo (&theta; &asymp; 0&deg;).</p>
+
+  <h3>3.3 Melville &amp; Coleman (2000)</h3>
+  <p>Formula semplificata che considera il regime di trasporto attraverso il fattore K<sub>I</sub>:</p>
+  <div class="formula">
+    y<sub>s</sub> = 2 &middot; K<sub>yb</sub> &middot; K<sub>I</sub> &middot; a
+  </div>
+
+  <h4>Fattore geometrico K<sub>yb</sub></h4>
+  <table class="param-table">
+    <tr><th>Condizione</th><th>Formula</th></tr>
+    <tr><td>y<sub>1</sub>/a &ge; 3 (pila stretta)</td><td>K<sub>yb</sub> = 1.0</td></tr>
+    <tr><td>0.2 &le; y<sub>1</sub>/a &lt; 3</td><td>K<sub>yb</sub> = &radic;(y<sub>1</sub> / (3 &middot; a))</td></tr>
+    <tr><td>y<sub>1</sub>/a &lt; 0.2 (pila larga)</td><td>K<sub>yb</sub> = 0.1 &middot; &radic;(y<sub>1</sub>/a)</td></tr>
+  </table>
+
+  <h4>Fattore intensit&agrave; flusso K<sub>I</sub></h4>
+  <table class="param-table">
+    <tr><th>Regime</th><th>Formula</th></tr>
+    <tr><td>Clear-water (V &le; V<sub>c</sub>)</td><td>K<sub>I</sub> = V / V<sub>c</sub></td></tr>
+    <tr><td>Live-bed (V &gt; V<sub>c</sub>)</td><td>K<sub>I</sub> = 1.0 (approssimazione conservativa)</td></tr>
+  </table>
+
+  <div class="note-box">
+    <strong>Nota:</strong> L&rsquo;implementazione attuale &egrave; semplificata e omette i fattori K<sub>D</sub> (dimensione sedimento), K<sub>s</sub> (forma pila) e K<sub>&theta;</sub> (allineamento) previsti dalla formulazione originale completa. Vedere il report di consulenza idraulica per proposte di completamento.
+  </div>
+
+  <h3>3.4 Metodo fattoriale (placeholder estendibile)</h3>
+  <p>Formula parametrica trasparente utile per confronto e calibrazione:</p>
+  <div class="formula">
+    y<sub>s</sub> = K<sub>total</sub> &middot; a
+  </div>
+  <p>L&rsquo;utente inserisce K<sub>total</sub> manualmente. Utile per confrontare con valori di letteratura o per estensioni future.</p>
+</section>
+
+<!-- ============ 4. COEFFICIENTI ============ -->
+<section id="coeff">
+  <h2>4. Coefficienti CSU/HEC-18</h2>
+
+  <h3>4.1 K<sub>1</sub> &mdash; Forma del naso della pila</h3>
+  <table>
+    <tr><th>Forma del naso</th><th>K<sub>1</sub></th><th>Descrizione</th></tr>
+    <tr><td>Naso arrotondato</td><td>1.0</td><td>Profilo semicircolare o ellittico</td></tr>
+    <tr><td>Cilindro circolare</td><td>1.0</td><td>Sezione circolare singola</td></tr>
+    <tr><td>Naso quadrato</td><td>1.1</td><td>Fronte piatto, massimo scalzamento</td></tr>
+    <tr><td>Naso affilato</td><td>0.9</td><td>Profilo a V o a freccia</td></tr>
+    <tr><td>Gruppo di cilindri</td><td>1.0</td><td>Valore base (senza correzione spaziatura)</td></tr>
+  </table>
+
+  <h3>4.2 K<sub>2</sub> &mdash; Angolo di attacco e rapporto L/a</h3>
+  <div class="formula">
+    K<sub>2</sub> = [cos(&theta;) + (L/a)* &middot; sin(&theta;)]<sup>0.65</sup><br>
+    dove (L/a)* = min(12, L/a)
+  </div>
+  <p>Per angoli nulli (&theta; = 0&deg;), K<sub>2</sub> = 1.0. Il coefficiente cresce rapidamente con l&rsquo;angolo, in particolare per rapporto L/a elevato.</p>
+
+  <h3>4.3 K<sub>3</sub> &mdash; Condizioni del fondo alveo</h3>
+  <table>
+    <tr><th>Condizione del fondo</th><th>K<sub>3</sub></th><th>Descrizione</th></tr>
+    <tr><td>Clear-water / plane bed / antidune</td><td>1.1</td><td>Trasporto assente o fondo piano</td></tr>
+    <tr><td>Dune medie</td><td>1.1 &ndash; 1.2</td><td>Morfologia ondulata moderata</td></tr>
+    <tr><td>Dune grandi</td><td>1.3</td><td>Morfologia ondulata pronunciata</td></tr>
+  </table>
+
+  <h3>4.4 K<sub>4</sub> &mdash; Armoring</h3>
+  <p>K<sub>4</sub> &le; 1.0 riduce lo scalzamento quando il fondo &egrave; protetto da ghiaia grossa che previene l&rsquo;erosione dei materiali fini sottostanti. K<sub>4</sub> = 1.0 corrisponde all&rsquo;assenza di armoring.</p>
+  <div class="warning-box">
+    <strong>Nota:</strong> L&rsquo;app accetta K<sub>4</sub> solo come input manuale. Vedere il report di consulenza per la proposta di calcolo automatico secondo HEC-18 eq. 6.6.
+  </div>
+</section>
+
+<!-- ============ 5. REGIME ============ -->
+<section id="regime">
+  <h2>5. Classificazione del regime di trasporto</h2>
+
+  <p>La velocit&agrave; critica per l&rsquo;inizio del moto del sedimento &egrave; calcolata con la formula HEC-18:</p>
+  <div class="formula">
+    V<sub>c</sub> = 6.19 &middot; y<sub>1</sub><sup>1/6</sup> &middot; D<sub>50</sub><sup>1/3</sup> &nbsp;&nbsp;[m/s, m, m]
+  </div>
+  <p>dove D<sub>50</sub> &egrave; il diametro mediano del sedimento espresso in metri.</p>
+
+  <h3>5.1 Classificazione binaria (implementata)</h3>
+  <table>
+    <tr><th>Condizione</th><th>Regime</th><th>Implicazioni</th></tr>
+    <tr><td>V &le; V<sub>c</sub></td><td><span class="badge badge-ok">Clear-water</span></td><td>Trasporto assente, scalzamento progressivo verso equilibrio</td></tr>
+    <tr><td>V &gt; V<sub>c</sub></td><td><span class="badge badge-warn">Live-bed</span></td><td>Trasporto generalizzato, scalzamento dinamico con del-fill</td></tr>
+  </table>
+
+  <div class="note-box">
+    <strong>Nota sulla velocit&agrave; critica:</strong> La formula V<sub>c</sub> &egrave; implicitamente calibrata per S<sub>s</sub> = 2.65 (sedimento quarzoso). Per sedimenti con densit&agrave; diversa, la classificazione del regime pu&ograve; essere errata. Vedere il report di consulenza idraulica per la formula di Neill generalizzata.
+  </div>
+</section>
+
+<!-- ============ 6. VERIFICHE ============ -->
+<section id="verifiche">
+  <h2>6. Verifiche normative</h2>
+  <p>L&rsquo;app esegue automaticamente 10 verifiche normative con soglie e riferimenti:</p>
+
+  <table>
+    <tr><th>N.</th><th>Verifica</th><th>Soglia</th><th>Riferimento</th></tr>
+    <tr><td>1</td><td>Numero di Froude</td><td>&lt; 0.80 (consigliato)</td><td>HEC-18</td></tr>
+    <tr><td>2</td><td>Regime di trasporto (V/V<sub>c</sub>)</td><td>V/V<sub>c</sub> &le; 1 (clear-water)</td><td>HEC-18 eq. 3.1</td></tr>
+    <tr><td>3</td><td>Angolo di attacco del flusso</td><td>&le; 5&deg; (preferibile)</td><td>HEC-18</td></tr>
+    <tr><td>4</td><td>Rapporto a/y<sub>1</sub></td><td>&le; 0.80 (intervallo tipico)</td><td>Melville &amp; Coleman (2000)</td></tr>
+    <tr><td>5</td><td>Coefficiente K<sub>2</sub> effettivo</td><td>&le; 1.0 (allineato)</td><td>HEC-18</td></tr>
+    <tr><td>6</td><td>Scalzamento normalizzato y<sub>s</sub>/a (CSU)</td><td>&le; 2.4 (round nose)</td><td>HEC-18</td></tr>
+    <tr><td>7</td><td>Fattore armoring K<sub>4</sub></td><td>= 1.0 o &lt; 1.0</td><td>HEC-18</td></tr>
+    <tr><td>8</td><td>Condizioni fondo K<sub>3</sub></td><td>&le; 1.10 (clear-water)</td><td>HEC-18</td></tr>
+    <tr><td>9</td><td>y<sub>s</sub> conservativo (massimo)</td><td>Valore progettuale</td><td>HEC-18; Melville &amp; Coleman</td></tr>
+    <tr><td>10</td><td>Incertezza tra formulazioni (spread)</td><td>&lt; 30% (buona coerenza)</td><td>Analisi comparativa</td></tr>
+  </table>
+
+  <h3>Classificazione degli esiti</h3>
+  <table>
+    <tr><th>Esito</th><th>Significato</th><th>Colore</th></tr>
+    <tr><td><span class="badge badge-ok">OK</span></td><td>Parametro entro i limiti raccomandati</td><td>Verde</td></tr>
+    <tr><td><span class="badge badge-warn">ATTENZIONE</span></td><td>Parametro vicino al limite o fuori range tipico</td><td>Giallo</td></tr>
+    <tr><td><span class="badge badge-danger">NON OK</span></td><td>Parametro fuori range, risultati potenzialmente inaffidabili</td><td>Rosso</td></tr>
+    <tr><td><span class="badge badge-info">INFO</span></td><td>Informazione aggiuntiva, non un esito negativo</td><td>Blu</td></tr>
+  </table>
+</section>
+
+<!-- ============ 7. SENSIBILITA ============ -->
+<section id="sensibilita">
+  <h2>7. Analisi di sensitivit&agrave;</h2>
+  <p>L&rsquo;app offre analisi di sensitivit&agrave; parametrica per valutare la variazione della profondit&agrave; di scalzamento al variare di:</p>
+
+  <h3>7.1 Sensitivit&agrave; rispetto alla velocit&agrave; V<sub>1</sub></h3>
+  <p>Varia V<sub>1</sub> nell&rsquo;intervallo [0.5&middot;V<sub>1,input</sub>, 1.5&middot;V<sub>1,input</sub>] con 40 punti. Per ciascun valore, calcola y<sub>s</sub> con tutte le formulazioni e traccia il grafico. Una linea tratteggiata rossa segna V<sub>c</sub> per evidenziare la transizione clear-water/live-bed.</p>
+
+  <h3>7.2 Sensitivit&agrave; rispetto al tirante y<sub>1</sub></h3>
+  <p>Varia y<sub>1</sub> nell&rsquo;intervallo [0.5&middot;y<sub>1,input</sub>, 1.5&middot;y<sub>1,input</sub>] con 40 punti. L&rsquo;output mostra come y<sub>s</sub> dipende dalla profondit&agrave; dell&rsquo;acqua a monte della pila.</p>
+
+  <h3>7.3 Export</h3>
+  <p>I dati di sensitivit&agrave; sono esportabili in CSV per ulteriori elaborazioni esterne.</p>
+
+  <div class="note-box">
+    <strong>Proposta di estensione:</strong> Il report di consulenza idraulica raccomanda l&rsquo;aggiunta di sensitivit&agrave; rispetto a D<sub>50</sub>, angolo di attacco θ, e un diagramma tornado per confrontare l&rsquo;impatto relativo di ciascun parametro.
+  </div>
+</section>
+
+<!-- ============ 8. REPORT ============ -->
+<section id="report">
+  <h2>8. Report e output</h2>
+  <p>L&rsquo;app genera i seguenti output:</p>
+
+  <h3>8.1 Interfaccia Streamlit</h3>
+  <ul>
+    <li><strong>Tab Risultati</strong>: Passaggi di calcolo passo-passo, tabella confronto formulazioni, riepilogo input e risultati</li>
+    <li><strong>Tab Grafici</strong>: Confronto diretto delle formulazioni (bar chart), scalzamento normalizzato, analisi di sensitivit&agrave; V e y<sub>1</sub></li>
+    <li><strong>Tab Verifiche avanzate</strong>: Tabella verifiche normative con colori, dettaglio regime di trasporto, dettaglio Melville &amp; Coleman</li>
+    <li><strong>Tab Note tecniche</strong>: Commenti progettuali automatici, riferimenti normativi</li>
+  </ul>
+
+  <h3>8.2 File scaricabili</h3>
+  <table>
+    <tr><th>Formato</th><th>Contenuto</th><th>Nome file</th></tr>
+    <tr><td>CSV</td><td>Passaggi di calcolo</td><td>scalzamento_passaggi.csv</td></tr>
+    <tr><td>CSV</td><td>Risultati confronto formulazioni</td><td>scalzamento_risultati.csv</td></tr>
+    <tr><td>CSV</td><td>Verifiche normative</td><td>scalzamento_verifiche.csv</td></tr>
+    <tr><td>CSV</td><td>Sensitivit&agrave; (V o y<sub>1</sub>)</td><td>scalzamento_sensitivita_*.csv</td></tr>
+    <tr><td>PDF</td><td>Report completo con 9 sezioni</td><td>scalzamento_report.pdf</td></tr>
+    <tr><td>Word (.docx)</td><td>Report completo con 10 sezioni</td><td>scalzamento_report.docx</td></tr>
+    <tr><td>JSON</td><td>Salvataggio/caricamento parametri di input</td><td>scalzamento_parametri.json</td></tr>
+  </table>
+
+  <h3>8.3 Struttura del report PDF/Word</h3>
+  <ol>
+    <li>Frontespizio (titolo, data, software, normative)</li>
+    <li>Parametri di input</li>
+    <li>Indicatori sintetici</li>
+    <li>Passaggi di calcolo (26 passi)</li>
+    <li>Confronto formulazioni</li>
+    <li>Verifiche normative (con esiti colorati nel Word)</li>
+    <li>Analisi di sensitivit&agrave;</li>
+    <li>Note tecniche e commenti progettuali</li>
+    <li>Disclaimer e campi di validit&agrave;</li>
+    <li>Riferimenti bibliografici</li>
+  </ol>
+</section>
+
+<!-- ============ 9. GUIDA ALL'USO ============ -->
+<section id="guida">
+  <h2>9. Guida all&rsquo;uso</h2>
+
+  <h3>9.1 Avvio</h3>
+  <div class="formula">pip install -r requirements.txt<br>streamlit run app.py</div>
+
+  <h3>9.2 Inserimento dei dati</h3>
+  <ol>
+    <li><strong>Geometria della pila</strong>: Inserire larghezza <em>a</em> (m), lunghezza <em>L</em> (m), forma del naso, angolo di attacco</li>
+    <li><strong>Idraulica di monte</strong>: Inserire tirante <em>y<sub>1</sub></em> (m) e velocit&agrave; <em>V<sub>1</sub></em> (m/s)</li>
+    <li><strong>Sedimento</strong>: Inserire D<sub>50</sub> (mm) e S<sub>s</sub> (peso specifico relativo)</li>
+    <li><strong>Coefficienti</strong>: Attivare K1 e K2 automatici oppure inserire manualmente; inserire K3 e K4</li>
+    <li><strong>Confronto</strong>: Inserire K<sub>total</sub> per il metodo fattoriale</li>
+  </ol>
+
+  <h3>9.3 Interpretazione dei risultati</h3>
+  <ul>
+    <li><strong>Indicatori sintetici</strong>: Fr, V<sub>c</sub>, V/V<sub>c</sub>, regime, y<sub>s</sub> max/min, spread</li>
+    <li><strong>Tabella passaggi</strong>: 26 passi con formula, valore, unit&agrave; e descrizione</li>
+    <li><strong>Confronto formulazioni</strong>: y<sub>s</sub> per ciascun metodo con riferimento e nota tecnica</li>
+    <li><strong>Verifiche</strong>: 10 verifiche con esito codificato a colori</li>
+    <li><strong>Grafici</strong>: Bar chart e sensitivit&agrave; interattivi con Plotly</li>
+  </ul>
+
+  <h3>9.4 Salvataggio e caricamento parametri</h3>
+  <p>Nella sidebar, usare il pulsante <strong>Scarica parametri JSON</strong> per salvare la configurazione corrente. Per ricaricare, usare <strong>Carica parametri (JSON)</strong> e poi <strong>Applica parametri caricati</strong>.</p>
+
+  <h3>9.5 Campi di validit&agrave;</h3>
+  <div class="warning-box">
+    <strong>Limiti di applicabilit&agrave; delle formule CSU/HEC-18:</strong>
+    <ul>
+      <li>0.1 &le; a/y<sub>1</sub> &le; 9.4 (rapporto larghezza/tirante)</li>
+      <li>Fr &le; 0.95 (moto subcritico)</li>
+      <li>D<sub>50</sub> &ge; 0.2 mm (sedimenti non coesivi)</li>
+      <li>a &ge; 0.3 m (pile di dimensioni significative)</li>
+      <li>S<sub>s</sub> &asymp; 2.65 (sedimento quarzoso; per altre densit&agrave;, usare cautela)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 10. RIFERIMENTI ============ -->
+<section id="riferimenti">
+  <h2>10. Riferimenti bibliografici</h2>
+  <ol>
+    <li>Richardson, E.V., &amp; Davis, S.R. (2001). <em>Evaluation of Scour at Bridges</em> &mdash; HEC-18, 4th Ed., FHWA NHI 01-001. Federal Highway Administration, U.S. Department of Transportation.</li>
+    <li>Arneson, L.A., Zevenbergen, L.W., Lagasse, P.F., &amp; Clopper, P.E. (2012). <em>Evaluating Scour at Bridges</em> &mdash; HEC-18, 5th Ed., FHWA-HIF-12-003. Federal Highway Administration.</li>
+    <li>Melville, B.W., &amp; Coleman, S.E. (2000). <em>Bridge Scour</em>. Water Resources Publications, Highlands Ranch, CO.</li>
+    <li>Laursen, E.M. (1958). &ldquo;The Total Weight of Sediment Transported by the 1 unethical Bottom Protuberances.&rdquo; <em>La Houille Blanche</em>, 13(2), 141-153.</li>
+    <li>Breusers, H.N.C., Nicollet, G., &amp; Shen, H.W. (1977). &ldquo;Local Scour Around Cylindrical Piers.&rdquo; <em>Journal of Hydraulic Research</em>, IAHR, 15(3), 211-252.</li>
+    <li>EN 1997-1:2004 (Eurocodice 7) &mdash; Progettazione geotecnica.</li>
+    <li>AASHTO (2017). <em>LRFD Bridge Design Specifications</em>, 8th Ed.</li>
+  </ol>
+</section>
+
+</div>
+
+<footer>
+  <p>Scalzamento &mdash; Documentazione Tecnica &middot; Generata automaticamente &middot; &copy; 2024&ndash;2026</p>
+  <p>Software conforme alle formulazioni HEC-18 (5&ordf; ed.) e Melville &amp; Coleman (2000)</p>
+</footer>
+
+</body>
+</html>

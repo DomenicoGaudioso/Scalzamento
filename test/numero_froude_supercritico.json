@@ -1,0 +1,22 @@
+{
+  "nome": "Numero di Froude - Moto supercritico (Fr > 1)",
+  "rif_bibliografico": "Chow (1959), Open-Channel Hydraulics — Fr = V / sqrt(g*y); HEC-18 avverte cautela per Fr > 1",
+  "input": {
+    "velocita": 3.0,
+    "tirante": 0.5
+  },
+  "output_atteso": {
+    "Fr": {
+      "valore": 1.354571,
+      "unita": "-",
+      "formula": "3.0 / sqrt(9.81 * 0.5) = 3.0 / 2.21472"
+    },
+    "classificazione": "supercritico",
+    "fr_soglia_08": {
+      "valore": true,
+      "nota": "Fr > 1: moto supercritico. Le formule CSU/HEC-18 e M&C sono calibrate per Fr < 1."
+    }
+  },
+  "toleranza_percentuale": 0.5,
+  "note": "Caso supercritico. Le formule empiriche CSU/HEC-18 e Melville & Coleman sono calibrate per condizioni subcritiche. Il risultato va usato con estrema cautela."
+}

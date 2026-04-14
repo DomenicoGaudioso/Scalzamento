@@ -9,6 +9,8 @@ from src import (DatiPila, valida_dati, k1_da_forma, calcola_report,
                  verifiche_scalzamento, melville_coleman_2000,
                  velocita_critica_incipiente, classificazione_regime,
                  numero_froude)
+from scalzamento_word import create_enhanced_word_report
+from src_ui_utils import show_results_table
 
 st.set_page_config(page_title="Scalzamento - Pila da ponte", layout="wide")
 st.title("Scalzamento locale presso una pila da ponte")
@@ -87,7 +89,13 @@ with st.sidebar:
                           max_value=4.0, step=0.05, key="scal_Ss")
     V_c = velocita_critica_incipiente(tirante_monte, D50_mm)
     regime_str = classificazione_regime(velocita_monte, V_c)
-    st.info(f"V_c = {V_c:.3f} m/s  \u2192  **{regime_str}**")
+    _regime_table = [
+        {"parametro": "V_c", "valore": round(V_c, 3), "unita": "m/s",
+         "descrizione": "Velocità critica per inizio moto del sedimento (HEC-18, eq. 3.1)"},
+        {"parametro": "Regime", "valore": regime_str, "unita": "-",
+         "descrizione": "Classificazione regime di trasporto (clear-water / live-bed)"},
+    ]
+    show_results_table(_regime_table, titolo="Regime di trasporto")
 
     st.header("Coefficienti CSU / HEC-18")
     usa_k1_tipico = st.checkbox("Usa K1 tipico dalla forma del naso", key="scal_k1_auto")
@@ -109,6 +117,8 @@ with st.sidebar:
     k_total_fattoriale = st.number_input("K_total fattoriale [-]",
                                          min_value=0.50, max_value=5.00, step=0.05,
                                          key="scal_k_fatt")
+
+    
 
 # Override K1 se checkbox attivo
 if usa_k1_tipico:
@@ -138,22 +148,63 @@ df_ver = verifiche_scalzamento(dati)
 note = commenti_progettuali(dati)
 
 # ---------------------------------------------------------------------------
+# Sidebar - Esportazione Report (dopo il calcolo)
+# ---------------------------------------------------------------------------
+with st.sidebar:
+    st.divider()
+    st.subheader("Esportazione Report")
+    try:
+        word_bytes = create_enhanced_word_report(dati)
+        st.download_button(
+            "Scarica Relazione Word (.docx)",
+            data=word_bytes,
+            file_name="Relazione_Scalzamento_Pila.docx",
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            use_container_width=True,
+        )
+    except ImportError:
+        st.warning("python-docx non installato. Eseguire: pip install python-docx")
+    except Exception as e:
+        st.error(f"Errore generazione Word: {e}")
+
+    try:
+        pdf_bytes = genera_pdf(dati, note)
+        st.download_button(
+            "Scarica Report PDF",
+            data=pdf_bytes,
+            file_name="scalzamento_report.pdf",
+            mime="application/pdf",
+            use_container_width=True,
+        )
+    except ImportError:
+        st.warning("fpdf2 non installato. Eseguire: pip install fpdf2")
+    except Exception as e:
+        st.error(f"Errore generazione PDF: {e}")
+
+# ---------------------------------------------------------------------------
 # Indicatori sintetici
 # ---------------------------------------------------------------------------
 n_ok  = (df_ver["Esito"] == "OK").sum()
 n_att = (df_ver["Esito"] == "ATTENZIONE").sum()
 n_no  = (df_ver["Esito"] == "NON OK").sum()
 
-col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
-col1.metric("Fr [-]", f"{indicatori['Fr [-]']:.3f}")
-col2.metric("V_c [m/s]", f"{indicatori['V_c [m/s]']:.3f}")
-col3.metric("V / V_c [-]", f"{indicatori['V / V_c [-]']:.3f}",
-            delta="live-bed" if indicatori["V / V_c [-]"] > 1 else "clear-water",
-            delta_color="inverse" if indicatori["V / V_c [-]"] > 1 else "normal")
-col4.metric("a / y\u2081 [-]", f"{indicatori['a / y1 [-]']:.3f}")
-col5.metric("K2 effettivo [-]", f"{indicatori['K2 effettivo [-]']:.3f}")
-col6.metric("ys max [m]", f"{indicatori['ys max [m]']:.3f}")
-col7.metric("Verif. OK / WARN / NO", f"{n_ok} / {n_att} / {n_no}", delta_color="off")
+_indicatori_table = [
+        {"parametro": "Fr", "valore": round(indicatori['Fr [-]'], 3), "unita": "-",
+         "descrizione": "Numero di Froude (V₁/√(g·y₁))"},
+        {"parametro": "V_c", "valore": round(indicatori['V_c [m/s]'], 3), "unita": "m/s",
+         "descrizione": "Velocità critica per inizio moto del sedimento (HEC-18, eq. 3.1)"},
+        {"parametro": "V/V_c", "valore": round(indicatori['V / V_c [-]'], 3), "unita": "-",
+         "descrizione": f"Rapporto velocità/velocità critica → {indicatori['Regime']}"},
+        {"parametro": "a/y₁", "valore": round(indicatori['a / y1 [-]'], 3), "unita": "-",
+         "descrizione": "Rapporto larghezza pila / tirante"},
+        {"parametro": "K2_eff", "valore": round(indicatori['K2 effettivo [-]'], 3), "unita": "-",
+         "descrizione": "Coefficiente K2 effettivo (angolo d'attacco e L/a)"},
+        {"parametro": "ys_max", "valore": round(indicatori['ys max [m]'], 4), "unita": "m",
+         "descrizione": "Profondità di scalzamento conservativa (max tutte le formulazioni)"},
+        {"parametro": "Verifica", "valore": f"{n_ok} OK / {n_att} ATTENZIONE / {n_no} NON OK", "unita": "-",
+         "descrizione": "Riepilogo esiti verifiche normative"},
+    ]
+    show_results_table(_indicatori_table, titolo="Indicatori sintetici")
 
 # ---------------------------------------------------------------------------
 # Tabs
@@ -171,25 +222,44 @@ with tab1:
     st.divider()
     col_a, col_b = st.columns(2)
     with col_a:
-        st.markdown("**Input geometria e idraulica**")
-        st.markdown(f"- Larghezza pila a = **{larghezza_pila:.3f} m**")
-        st.markdown(f"- Lunghezza pila L = **{lunghezza_pila:.3f} m**  (L/a = {indicatori['L / a [-]']:.2f})")
-        st.markdown(f"- Forma naso: *{forma_naso}*  |  K1 = {k1:.3f}")
-        st.markdown(f"- Angolo attacco = **{angolo_attacco_gradi:.1f}\u00b0**  |  K2 = {indicatori['K2 effettivo [-]']:.4f}")
-        st.markdown(f"- Tirante y\u2081 = **{tirante_monte:.3f} m**")
-        st.markdown(f"- Velocit\u00e0 V\u2081 = **{velocita_monte:.3f} m/s**  |  Fr = {indicatori['Fr [-]']:.4f}")
-        st.markdown(f"- D50 = **{D50_mm:.2f} mm**  |  Ss = {Ss:.2f}")
+        _input_table = [
+            {"parametro": "a", "valore": round(larghezza_pila, 3), "unita": "m",
+             "descrizione": "Larghezza caratteristica della pila"},
+            {"parametro": "L", "valore": round(lunghezza_pila, 3), "unita": "m",
+             "descrizione": f"Lunghezza della pila (L/a = {indicatori['L / a [-]']:.2f})"},
+            {"parametro": "Forma naso", "valore": forma_naso, "unita": "-",
+             "descrizione": f"Forma del naso della pila (K1 = {k1:.3f})"},
+            {"parametro": "\u03b8", "valore": round(angolo_attacco_gradi, 1), "unita": "\u00b0",
+             "descrizione": f"Angolo di attacco del flusso (K2 eff. = {indicatori['K2 effettivo [-]']:.4f})"},
+            {"parametro": "y\u2081", "valore": round(tirante_monte, 3), "unita": "m",
+             "descrizione": "Tirante indisturbato a monte"},
+            {"parametro": "V\u2081", "valore": round(velocita_monte, 3), "unita": "m/s",
+             "descrizione": f"Velocità media a monte (Fr = {indicatori['Fr [-]']:.4f})"},
+            {"parametro": "D\u2085\u2080", "valore": round(D50_mm, 2), "unita": "mm",
+             "descrizione": f"Diametro mediano del sedimento (Ss = {Ss:.2f})"},
+        ]
+        show_results_table(_input_table, titolo="Input geometria e idraulica")
     with col_b:
-        st.markdown("**Regime di trasporto e risultati**")
-        st.markdown(f"- V_c (HEC-18) = **{indicatori['V_c [m/s]']:.3f} m/s**")
-        st.markdown(f"- V/V_c = **{indicatori['V / V_c [-]']:.3f}**  \u2192  *{indicatori['Regime']}*")
-        st.markdown(f"- ys CSU/HEC-18 = **{float(report.loc[report['Formulazione']=='CSU / HEC-18', 'ys [m]'].values[0]):.4f} m**")
-        st.markdown(f"- ys Melville & Coleman = **{float(report.loc[report['Formulazione']=='Melville & Coleman (2000)', 'ys [m]'].values[0]):.4f} m**")
-        st.markdown(f"- **ys conservativo (max) = {indicatori['ys max [m]']:.4f} m**")
-        st.markdown(f"- Spread formulazioni = {indicatori['spread [m]']:.4f} m")
+        _ys_csu = float(report.loc[report['Formulazione']=='CSU / HEC-18', 'ys [m]'].values[0])
+        _ys_mc = float(report.loc[report['Formulazione']=='Melville & Coleman (2000)', 'ys [m]'].values[0])
+        _risultati_table = [
+            {"parametro": "V_c", "valore": round(indicatori['V_c [m/s]'], 3), "unita": "m/s",
+             "descrizione": "Velocità critica per inizio moto (HEC-18, eq. 3.1)"},
+            {"parametro": "V/V_c", "valore": round(indicatori['V / V_c [-]'], 3), "unita": "-",
+             "descrizione": f"Rapporto velocità/velocità critica → {indicatori['Regime']}"},
+            {"parametro": "ys CSU/HEC-18", "valore": round(_ys_csu, 4), "unita": "m",
+             "descrizione": "Profondità di scalzamento CSU/HEC-18"},
+            {"parametro": "ys Melville & Coleman", "valore": round(_ys_mc, 4), "unita": "m",
+             "descrizione": "Profondità di scalzamento Melville & Coleman (2000)"},
+            {"parametro": "ys conservativo (max)", "valore": round(indicatori['ys max [m]'], 4), "unita": "m",
+             "descrizione": "Valore conservativo (massimo tra tutte le formulazioni)"},
+            {"parametro": "Spread formulazioni", "valore": round(indicatori['spread [m]'], 4), "unita": "m",
+             "descrizione": "Incertezza tra formulazioni (ys_max − ys_min)"},
+        ]
+        show_results_table(_risultati_table, titolo="Regime di trasporto e risultati")
 
     st.divider()
-    col_dl1, col_dl2, col_dl3 = st.columns(3)
+    col_dl1, col_dl2, col_dl3, col_dl4 = st.columns(4)
     with col_dl1:
         st.download_button("Scarica passaggi CSV",
                            df_pass.to_csv(index=False).encode("utf-8"),
@@ -205,6 +275,16 @@ with tab1:
                                "scalzamento_report.pdf", "application/pdf")
         except ImportError:
             st.warning("fpdf2 non installato. Eseguire: pip install fpdf2")
+    with col_dl4:
+        try:
+            word_bytes = create_enhanced_word_report(dati)
+            st.download_button("Scarica Relazione Word", word_bytes,
+                               "Relazione_Scalzamento_Pila.docx",
+                               "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+        except ImportError:
+            st.warning("python-docx non installato. Eseguire: pip install python-docx")
+        except Exception as e:
+            st.error(f"Errore generazione Word: {e}")
 
 with tab2:
     st.subheader("Confronto diretto delle formulazioni")
@@ -257,19 +337,29 @@ with tab3:
     st.subheader("Regime di trasporto - Dettaglio")
     col_reg1, col_reg2 = st.columns(2)
     with col_reg1:
-        st.markdown(f"- Velocit\u00e0 critica HEC-18: **V_c = {V_c:.4f} m/s**")
-        st.markdown(f"- Velocit\u00e0 a monte: **V\u2081 = {velocita_monte:.4f} m/s**")
-        st.markdown(f"- Rapporto V/V_c = **{velocita_monte/V_c:.4f}**")
-        st.markdown(f"- **Regime: {regime_str}**")
+        _regime_dettaglio_table = [
+            {"parametro": "V_c", "valore": round(V_c, 4), "unita": "m/s",
+             "descrizione": "Velocità critica per inizio moto (HEC-18, eq. 3.1)"},
+            {"parametro": "V\u2081", "valore": round(velocita_monte, 4), "unita": "m/s",
+             "descrizione": "Velocità media a monte della pila"},
+            {"parametro": "V/V_c", "valore": round(velocita_monte / V_c, 4), "unita": "-",
+             "descrizione": f"Rapporto velocità → {regime_str}"},
+        ]
+        show_results_table(_regime_dettaglio_table, titolo="Regime di trasporto")
         st.caption("Formula V_c = 6.19 \u00b7 y\u2081^(1/6) \u00b7 D50^(1/3)  (HEC-18, eq. 3.1)")
     with col_reg2:
-        st.markdown("**K_yb e K_I (Melville & Coleman)**")
         from src import _k_yb_melville, _k_intensity_melville
         K_yb = _k_yb_melville(tirante_monte, larghezza_pila)
         K_I = _k_intensity_melville(velocita_monte, V_c)
-        st.markdown(f"- K_yb (profondita'/larghezza) = **{K_yb:.4f}**")
-        st.markdown(f"- K_I (intensita' flusso) = **{K_I:.4f}**")
-        st.markdown(f"- ys_MC = 2 \u00b7 K_yb \u00b7 K_I \u00b7 a = **{2*K_yb*K_I*larghezza_pila:.4f} m**")
+        _melville_table = [
+            {"parametro": "K_yb", "valore": round(K_yb, 4), "unita": "-",
+             "descrizione": "Fattore geometrico profondità/larghezza (Melville & Coleman, 2000)"},
+            {"parametro": "K_I", "valore": round(K_I, 4), "unita": "-",
+             "descrizione": "Fattore intensità del flusso (Melville & Coleman, 2000)"},
+            {"parametro": "ys_MC", "valore": round(2 * K_yb * K_I * larghezza_pila, 4), "unita": "m",
+             "descrizione": "Profondità di scalzamento = 2·K_yb·K_I·a (Melville & Coleman, 2000)"},
+        ]
+        show_results_table(_melville_table, titolo="Melville & Coleman — Dettaglio")
 
     st.divider()
     st.download_button("Scarica verifiche CSV",

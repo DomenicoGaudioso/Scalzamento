@@ -1,0 +1,89 @@
+{
+  "nome": "Validazione input - Parametri non validi",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012) — Limiti di validita dei parametri",
+  "input": {
+    "casi_non_validi": [
+      {
+        "descrizione": "Larghezza pila <= 0",
+        "larghezza_pila": 0.0,
+        "errore_atteso": "La larghezza della pila deve essere maggiore di 0 m."
+      },
+      {
+        "descrizione": "Tirante <= 0",
+        "larghezza_pila": 1.5,
+        "tirante_monte": -1.0,
+        "errore_atteso": "Il tirante a monte deve essere maggiore di 0 m."
+      },
+      {
+        "descrizione": "Velocita <= 0",
+        "larghezza_pila": 1.5,
+        "tirante_monte": 3.0,
+        "velocita_monte": 0.0,
+        "errore_atteso": "La velocita a monte deve essere maggiore di 0 m/s."
+      },
+      {
+        "descrizione": "Angolo fuori range (> 90)",
+        "larghezza_pila": 1.5,
+        "tirante_monte": 3.0,
+        "velocita_monte": 2.0,
+        "angolo_attacco_gradi": 100.0,
+        "errore_atteso": "L'angolo di attacco deve essere compreso tra 0 e 90 gradi."
+      },
+      {
+        "descrizione": "K1 <= 0",
+        "larghezza_pila": 1.5,
+        "tirante_monte": 3.0,
+        "velocita_monte": 2.0,
+        "k1": 0.0,
+        "errore_atteso": "Il coefficiente K1 deve essere positivo."
+      },
+      {
+        "descrizione": "D50 <= 0",
+        "larghezza_pila": 1.5,
+        "tirante_monte": 3.0,
+        "velocita_monte": 2.0,
+        "D50_mm": 0.0,
+        "errore_atteso": "Il D50 del sedimento deve essere positivo."
+      },
+      {
+        "descrizione": "Ss <= 1.0",
+        "larghezza_pila": 1.5,
+        "tirante_monte": 3.0,
+        "velocita_monte": 2.0,
+        "D50_mm": 1.0,
+        "Ss": 1.0,
+        "errore_atteso": "Il peso specifico relativo Ss deve essere maggiore di 1.0."
+      },
+      {
+        "descrizione": "Forma naso non supportata",
+        "larghezza_pila": 1.5,
+        "tirante_monte": 3.0,
+        "velocita_monte": 2.0,
+        "forma_naso": "triangolo",
+        "errore_atteso": "La forma del naso selezionata non e' supportata."
+      },
+      {
+        "descrizione": "Lunghezza pila <= 0",
+        "larghezza_pila": 1.5,
+        "lunghezza_pila": 0.0,
+        "tirante_monte": 3.0,
+        "velocita_monte": 2.0,
+        "errore_atteso": "La lunghezza della pila deve essere maggiore di 0 m."
+      },
+      {
+        "descrizione": "K_total fattoriale <= 0",
+        "larghezza_pila": 1.5,
+        "lunghezza_pila": 6.0,
+        "tirante_monte": 3.0,
+        "velocita_monte": 2.0,
+        "k_total_fattoriale": 0.0,
+        "errore_atteso": "Il coefficiente K_total della formulazione fattoriale deve essere positivo."
+      }
+    ]
+  },
+  "output_atteso": {
+    "nota": "Ogni caso deve generare l'errore corrispondente tramite la funzione valida_dati(). I casi sono indipendenti."
+  },
+  "toleranza_percentuale": 0.0,
+  "note": "Test di validazione dell'input. La funzione valida_dati() deve restituire una lista di stringhe di errore non vuota per ogni caso. Verifica che tutti i controlli di intervallo siano attivi."
+}

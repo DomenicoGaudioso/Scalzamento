@@ -1,0 +1,50 @@
+{
+  "nome": "Melville & Coleman (2000) - Pila larga (y1/a < 0.2, K_yb piccolo)",
+  "rif_bibliografico": "Melville & Coleman (2000), Bridge Scour, Cap. 3 — K_yb = 0.1*sqrt(y1/a) per y1/a < 0.2",
+  "input": {
+    "larghezza_pila": 5.0,
+    "lunghezza_pila": 15.0,
+    "tirante_monte": 0.5,
+    "velocita_monte": 0.3,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 1.0,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "y1_su_a": {
+      "valore": 0.1,
+      "unita": "-",
+      "formula": "0.5 / 5.0 = 0.1 < 0.2"
+    },
+    "K_yb": {
+      "valore": 0.031623,
+      "unita": "-",
+      "formula": "0.1 * sqrt(y1/a) = 0.1 * sqrt(0.1) = 0.1 * 0.31623"
+    },
+    "V_c": {
+      "valore": 0.551466,
+      "unita": "m/s",
+      "formula": "6.19 * 0.5^(1/6) * 0.001^(1/3)"
+    },
+    "K_I": {
+      "valore": 0.544171,
+      "unita": "-",
+      "formula": "min(1, 0.3/0.551466) = 0.5442"
+    },
+    "ys_MC": {
+      "valore": 0.172029,
+      "unita": "m",
+      "formula": "2 * 0.031623 * 0.544171 * 5.0"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "Caso di pila molto larga rispetto al tirante (y1/a = 0.1 < 0.2). K_yb e' molto piccolo (0.032), risultando in uno scalzamento molto basso. Il flusso e' quasi 2D."
+}

@@ -1,0 +1,37 @@
+{
+  "nome": "Classificazione regime - Live-bed (V > V_c)",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), §3.1 — Regime di trasporto e velocita critica",
+  "input": {
+    "larghezza_pila": 1.5,
+    "lunghezza_pila": 6.0,
+    "tirante_monte": 3.0,
+    "velocita_monte": 2.0,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 1.0,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "V_c": {
+      "valore": 0.743380,
+      "unita": "m/s"
+    },
+    "V_su_Vc": {
+      "valore": 2.690414,
+      "unita": "-"
+    },
+    "regime": {
+      "valore": "Live-bed (trasporto generalizzato)",
+      "formula": "V=2.0 > V_c=0.743"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "Regime live-bed: la velocita supera la critica, il sedimento viene trasportato attivamente. Verificare con cura K3 e D50. Lo scalzamento in live-bed puo essere inferiore al clear-water per effetto del rifornimento di sedimento."
+}

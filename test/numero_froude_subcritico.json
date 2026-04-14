@@ -1,0 +1,22 @@
+{
+  "nome": "Numero di Froude - Moto subcritico (Fr < 1)",
+  "rif_bibliografico": "Chow (1959), Open-Channel Hydraulics — Fr = V / sqrt(g*y)",
+  "input": {
+    "velocita": 2.0,
+    "tirante": 3.0
+  },
+  "output_atteso": {
+    "Fr": {
+      "valore": 0.368668,
+      "unita": "-",
+      "formula": "2.0 / sqrt(9.81 * 3.0) = 2.0 / 5.42479"
+    },
+    "classificazione": "subcritico",
+    "fr_soglia_08": {
+      "valore": false,
+      "nota": "Fr < 0.80: moto subcritico lontano dal critico"
+    }
+  },
+  "toleranza_percentuale": 0.5,
+  "note": "Caso tipico subcritico. Fr = 0.369 indica moto tranquillo, ben al di sotto del limite critico."
+}

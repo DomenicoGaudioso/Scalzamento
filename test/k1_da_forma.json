@@ -1,0 +1,37 @@
+{
+  "nome": "K1 da forma - Verifica mapping completo dei coefficienti di forma",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), Tabella 6.1 — Coefficiente K1 per forma del naso",
+  "input": {
+    "forma_naso_valori": [
+      "naso quadrato",
+      "naso arrotondato",
+      "cilindro circolare",
+      "gruppo di cilindri",
+      "naso affilato"
+    ]
+  },
+  "output_atteso": {
+    "K1_naso_quadrato": {
+      "valore": 1.1,
+      "rif": "HEC-18 Tabella 6.1: square nose"
+    },
+    "K1_naso_arrotondato": {
+      "valore": 1.0,
+      "rif": "HEC-18 Tabella 6.1: round nose"
+    },
+    "K1_cilindro_circolare": {
+      "valore": 1.0,
+      "rif": "HEC-18 Tabella 6.1: circular cylinder"
+    },
+    "K1_gruppo_di_cilindri": {
+      "valore": 1.0,
+      "rif": "HEC-18 Tabella 6.1: group of cylinders"
+    },
+    "K1_naso_affilato": {
+      "valore": 0.9,
+      "rif": "HEC-18 Tabella 6.1: sharp nose"
+    }
+  },
+  "toleranza_percentuale": 0.0,
+  "note": "Verifica che la funzione k1_da_forma() restituisca i valori corretti per tutte le 5 forme supportate. I valori sono esatti (nessuna tolleranza)."
+}

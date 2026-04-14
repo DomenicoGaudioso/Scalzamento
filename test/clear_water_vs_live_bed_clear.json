@@ -1,0 +1,37 @@
+{
+  "nome": "Classificazione regime - Clear-water (V < V_c)",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), §3.1 — Regime di trasporto e velocita critica",
+  "input": {
+    "larghezza_pila": 1.5,
+    "lunghezza_pila": 6.0,
+    "tirante_monte": 3.0,
+    "velocita_monte": 0.5,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 2.0,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "V_c": {
+      "valore": 0.936600,
+      "unita": "m/s"
+    },
+    "V_su_Vc": {
+      "valore": 0.533846,
+      "unita": "-"
+    },
+    "regime": {
+      "valore": "Clear-water (senza trasporto)",
+      "formula": "V=0.5 < V_c=0.937"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "Regime clear-water: la velocita e inferiore alla critica, non c'e trasporto di sedimento dal fondo. La formula CSU/HEC-18 e applicabile direttamente."
+}

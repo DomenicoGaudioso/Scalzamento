@@ -600,8 +600,8 @@ def tabella_passaggi(dati: DatiPila) -> pd.DataFrame:
              f"{max(ys_csu, ys_csu_lim, ys_mc, ys_fatt):.5f}", "m",
              "Valore di progetto: il massimo tra tutte le formulazioni"),
     ]
-    return pd.DataFrame(rows, columns=["Passo", "Grandezza", "Simbolo",
-                                       "Formula", "Valore", "Unita", "Descrizione"])
+    return pd.DataFrame(rows, columns=["Passo", "Grandezza", "Parametro",
+                                       "Formula", "Valore", "Unità", "Descrizione"])
 
 
 # ---------------------------------------------------------------------------
@@ -659,78 +659,243 @@ def _pdf_tabella(pdf, df: pd.DataFrame) -> None:
         pdf.ln()
 
 
+def _pdf_esito_colorato(pdf, esito: str) -> None:
+    """Imposta colore testo in funzione dell'esito della verifica."""
+    if esito == "OK":
+        pdf.set_text_color(27, 122, 61)     # verde
+    elif esito == "NON OK":
+        pdf.set_text_color(192, 57, 43)     # rosso
+    elif esito == "ATTENZIONE":
+        pdf.set_text_color(184, 134, 11)    # giallo scuro
+    elif esito == "INFO":
+        pdf.set_text_color(41, 128, 185)    # blu
+    else:
+        pdf.set_text_color(0, 0, 0)
+
+
+def _pdf_sezione_verifiche(pdf, df_ver: pd.DataFrame) -> None:
+    """Tabella verifiche normative con esiti colorati."""
+    cols = list(df_ver.columns)
+    larghezze = {
+        "N.": 8, "Verifica": 50, "Valore calcolato": 30,
+        "Limite/soglia": 30, "Esito": 22, "Riferimento normativo": 50,
+    }
+    default_w = 28
+    row_h = 5
+
+    # Header
+    pdf.set_font("Helvetica", "B", 7)
+    pdf.set_fill_color(44, 62, 80)
+    pdf.set_text_color(255, 255, 255)
+    for col in cols:
+        w = larghezze.get(col, default_w)
+        pdf.cell(w, row_h + 1, col, border=1, align="C", fill=True)
+    pdf.ln()
+
+    # Righe dati
+    pdf.set_font("Helvetica", "", 7)
+    for idx, (_, row) in enumerate(df_ver.iterrows()):
+        bg = (245, 246, 250) if idx % 2 == 0 else (255, 255, 255)
+        esito_val = str(row.get("Esito", ""))
+
+        for col in cols:
+            w = larghezze.get(col, default_w)
+            val = row[col]
+            txt = f"{val:.4f}" if isinstance(val, float) else str(val)
+            if len(txt) > int(w / 2.1):
+                txt = txt[: max(4, int(w / 2.1)) - 2] + ".."
+
+            if col == "Esito":
+                _pdf_esito_colorato(pdf, esito_val)
+                pdf.set_font("Helvetica", "B", 7)
+            else:
+                pdf.set_text_color(0, 0, 0)
+                pdf.set_font("Helvetica", "", 7)
+
+            pdf.set_fill_color(*bg)
+            align = "C" if col in ("N.", "Esito") else "L"
+            pdf.cell(w, row_h, txt, border=1, align=align, fill=True)
+
+        # Reset colore
+        pdf.set_text_color(0, 0, 0)
+        pdf.set_font("Helvetica", "", 7)
+        pdf.ln()
+
+    pdf.set_text_color(0, 0, 0)
+
+
 def genera_pdf(dati: DatiPila, note: List[str]) -> bytes:
+    """Genera il report PDF migliorato per lo scalzamento locale."""
     from fpdf import FPDF
 
     df_pass = tabella_passaggi(dati)
     df_report = calcola_report(dati)
     df_ver = verifiche_scalzamento(dati)
     indicatori = sintesi_indicatori(dati)
+    df_sens_v = serie_sensitivita_velocita(dati)
+    df_sens_y = serie_sensitivita_tirante(dati)
 
     pdf = FPDF(orientation="P", unit="mm", format="A4")
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
 
-    pdf.set_font("Helvetica", "B", 14)
-    pdf.set_fill_color(20, 60, 120)
+    # ===== FRONTESPIZIO =====
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.set_fill_color(44, 62, 80)
     pdf.set_text_color(255, 255, 255)
-    pdf.cell(0, 12, "Report - Scalzamento Locale Pila da Ponte",
-             ln=True, align="C", fill=True)
+    pdf.cell(0, 14, "RELAZIONE TECNICA", ln=True, align="C", fill=True)
+    pdf.set_font("Helvetica", "B", 12)
+    pdf.set_fill_color(41, 128, 185)
+    pdf.cell(0, 10, "Scalzamento Locale presso una Pila da Ponte", ln=True, align="C", fill=True)
     pdf.set_text_color(0, 0, 0)
     pdf.set_font("Helvetica", "", 8)
-    pdf.cell(0, 6, f"Generato il {datetime.date.today().strftime('%d/%m/%Y')}  |  "
-             "Formule: CSU/HEC-18, Melville & Coleman (2000)",
+    pdf.ln(2)
+    pdf.cell(0, 5, f"Data: {datetime.date.today().strftime('%d/%m/%Y')}",
              ln=True, align="C")
-    pdf.ln(4)
+    pdf.cell(0, 5, "Software: Scalzamento - Pila da Ponte (CSU/HEC-18, Melville & Coleman 2000)",
+             ln=True, align="C")
+    pdf.cell(0, 5, "Normative: HEC-18 (5a ed.), Melville & Coleman (2000), EN 1997",
+             ln=True, align="C")
+    pdf.ln(6)
 
+    # ===== 1. PARAMETRI DI INPUT =====
     _pdf_sezione(pdf, "1. Parametri di input")
-    _pdf_riga_kv(pdf, "Larghezza pila a", f"{dati.larghezza_pila:.3f} m")
-    _pdf_riga_kv(pdf, "Lunghezza pila L", f"{dati.lunghezza_pila:.3f} m")
+    _pdf_riga_kv(pdf, "Larghezza pila a", f"{dati.larghezza_pila:.4f} m")
+    _pdf_riga_kv(pdf, "Lunghezza pila L", f"{dati.lunghezza_pila:.4f} m")
+    _pdf_riga_kv(pdf, "Rapporto L / a", f"{indicatori['L / a [-]']:.4f} -")
     _pdf_riga_kv(pdf, "Forma naso", dati.forma_naso)
     _pdf_riga_kv(pdf, "Angolo di attacco", f"{dati.angolo_attacco_gradi:.1f} gradi")
-    _pdf_riga_kv(pdf, "Tirante a monte y1", f"{dati.tirante_monte:.3f} m")
-    _pdf_riga_kv(pdf, "Velocita' a monte V1", f"{dati.velocita_monte:.3f} m/s")
+    _pdf_riga_kv(pdf, "Tirante a monte y1", f"{dati.tirante_monte:.4f} m")
+    _pdf_riga_kv(pdf, "Velocita' a monte V1", f"{dati.velocita_monte:.4f} m/s")
     _pdf_riga_kv(pdf, "D50 sedimento", f"{dati.D50_mm:.3f} mm")
     _pdf_riga_kv(pdf, "Ss (peso spec. rel.)", f"{dati.Ss:.3f}")
-    _pdf_riga_kv(pdf, "K1", f"{dati.k1:.3f}")
-    _pdf_riga_kv(pdf, "K2 (auto)" if dati.usa_k2_automatico else "K2 (manuale)",
-                 f"{indicatori['K2 effettivo [-]']:.4f}")
-    _pdf_riga_kv(pdf, "K3", f"{dati.k3:.3f}")
-    _pdf_riga_kv(pdf, "K4", f"{dati.k4:.3f}")
+    pdf.ln(1)
+    _pdf_riga_kv(pdf, "K1 (forma naso)", f"{dati.k1:.4f}")
+    k2_label = "K2 (auto)" if dati.usa_k2_automatico else "K2 (manuale)"
+    _pdf_riga_kv(pdf, k2_label, f"{indicatori['K2 effettivo [-]']:.4f}")
+    _pdf_riga_kv(pdf, "K3 (condizioni fondo)", f"{dati.k3:.4f}")
+    _pdf_riga_kv(pdf, "K4 (armoring)", f"{dati.k4:.4f}")
+    _pdf_riga_kv(pdf, "K_total fattoriale", f"{dati.k_total_fattoriale:.4f}")
     pdf.ln(4)
 
+    # ===== 2. INDICATORI SINTETICI =====
     _pdf_sezione(pdf, "2. Indicatori sintetici")
-    _pdf_riga_kv(pdf, "Numero di Froude Fr", f"{indicatori['Fr [-]']:.4f}")
-    _pdf_riga_kv(pdf, "Rapporto a / y1", f"{indicatori['a / y1 [-]']:.4f}")
-    _pdf_riga_kv(pdf, "Rapporto L / a", f"{indicatori['L / a [-]']:.4f}")
-    _pdf_riga_kv(pdf, "K2 effettivo", f"{indicatori['K2 effettivo [-]']:.4f}")
-    _pdf_riga_kv(pdf, "Velocita' critica V_c", f"{indicatori['V_c [m/s]']:.4f} m/s")
-    _pdf_riga_kv(pdf, "V / V_c", f"{indicatori['V / V_c [-]']:.4f}")
+    _pdf_riga_kv(pdf, "Numero di Froude Fr", f"{indicatori['Fr [-]']:.5f}")
+    _pdf_riga_kv(pdf, "Rapporto a / y1", f"{indicatori['a / y1 [-]']:.5f}")
+    _pdf_riga_kv(pdf, "Rapporto L / a", f"{indicatori['L / a [-]']:.5f}")
+    _pdf_riga_kv(pdf, "K2 effettivo", f"{indicatori['K2 effettivo [-]']:.5f}")
+    _pdf_riga_kv(pdf, "Velocita' critica V_c", f"{indicatori['V_c [m/s]']:.5f} m/s")
+    _pdf_riga_kv(pdf, "V / V_c", f"{indicatori['V / V_c [-]']:.5f}")
     _pdf_riga_kv(pdf, "Regime trasporto", indicatori["Regime"])
-    _pdf_riga_kv(pdf, "ys massimo (cautelativo)", f"{indicatori['ys max [m]']:.4f} m")
-    _pdf_riga_kv(pdf, "ys minimo", f"{indicatori['ys min [m]']:.4f} m")
-    _pdf_riga_kv(pdf, "Spread ys max - ys min", f"{indicatori['spread [m]']:.4f} m")
+    _pdf_riga_kv(pdf, "ys massimo (cautelativo)", f"{indicatori['ys max [m]']:.5f} m")
+    _pdf_riga_kv(pdf, "ys minimo", f"{indicatori['ys min [m]']:.5f} m")
+    _pdf_riga_kv(pdf, "Spread ys max - ys min", f"{indicatori['spread [m]']:.5f} m")
     pdf.ln(4)
 
+    # ===== 3. PASSAGGI DI CALCOLO =====
     _pdf_sezione(pdf, "3. Passaggi di calcolo (passo per passo)")
     _pdf_tabella(pdf, df_pass)
     pdf.ln(4)
 
+    # ===== 4. CONFRONTO FORMULAZIONI =====
     pdf.add_page()
     _pdf_sezione(pdf, "4. Confronto formulazioni")
     _pdf_tabella(pdf, df_report)
     pdf.ln(4)
 
+    # ===== 5. VERIFICHE NORMATIVE (con colori) =====
     _pdf_sezione(pdf, "5. Verifiche normative")
-    _pdf_tabella(pdf, df_ver)
+    _pdf_sezione_verifiche(pdf, df_ver)
     pdf.ln(4)
 
+    # ===== 6. ANALISI DI SENSIBILITA' =====
     pdf.add_page()
-    _pdf_sezione(pdf, "6. Note tecniche e commenti progettuali")
+    _pdf_sezione(pdf, "6. Analisi di sensitivita'")
+    pdf.set_font("Helvetica", "I", 8)
+    pdf.multi_cell(0, 5,
+        "L'analisi esplora la variazione di ys al variare di V1 e y1. "
+        "I grafici interattivi sono disponibili nell'app Streamlit (tab Grafici).")
+    pdf.ln(2)
+
+    pdf.set_font("Helvetica", "B", 9)
+    pdf.cell(0, 5, "Sensibilita' rispetto alla velocita' V1:", ln=True)
     pdf.set_font("Helvetica", "", 8)
-    for item in note:
+    for formula_name in df_sens_v["Formulazione"].unique():
+        sub = df_sens_v[df_sens_v["Formulazione"] == formula_name]
+        ys_min = sub["ys [m]"].min()
+        ys_max = sub["ys [m]"].max()
+        txt = (f"  {formula_name}: ys da {ys_min:.4f} m a {ys_max:.4f} m "
+               f"(range {ys_max - ys_min:.4f} m)")
+        pdf.cell(0, 5, txt.encode("latin-1", "replace").decode("latin-1"), ln=True)
+
+    pdf.ln(3)
+    pdf.set_font("Helvetica", "B", 9)
+    pdf.cell(0, 5, "Sensibilita' rispetto al tirante y1:", ln=True)
+    pdf.set_font("Helvetica", "", 8)
+    for formula_name in df_sens_y["Formulazione"].unique():
+        sub = df_sens_y[df_sens_y["Formulazione"] == formula_name]
+        ys_min = sub["ys [m]"].min()
+        ys_max = sub["ys [m]"].max()
+        txt = (f"  {formula_name}: ys da {ys_min:.4f} m a {ys_max:.4f} m "
+               f"(range {ys_max - ys_min:.4f} m)")
+        pdf.cell(0, 5, txt.encode("latin-1", "replace").decode("latin-1"), ln=True)
+    pdf.ln(4)
+
+    # ===== 7. NOTE TECNICHE =====
+    pdf.add_page()
+    _pdf_sezione(pdf, "7. Note tecniche e commenti progettuali")
+    pdf.set_font("Helvetica", "", 8)
+    for i, item in enumerate(note, 1):
+        txt = f"{i}. " + item.encode("latin-1", "replace").decode("latin-1")
+        pdf.multi_cell(0, 5, txt)
+        pdf.ln(1)
+    pdf.ln(2)
+
+    # ===== 8. DISCLAIMER =====
+    _pdf_sezione(pdf, "8. Disclaimer e campi di validita'")
+    pdf.set_font("Helvetica", "", 8)
+    disclaimer_items = [
+        "I risultati prodotti dall'applicazione devono essere verificati da un ingegnere "
+        "abilitato all'esercizio della professione e non sostituiscono in alcun modo il "
+        "giudizio professionale del progettista responsabile.",
+        "Le formule CSU/HEC-18 e Melville & Coleman (2000) sono state sviluppate per "
+        "condizioni subcritiche (Fr < 1) e per pile singole in alvei rettilinei a bassa "
+        "sinuosita'. L'applicabilita' in condizioni supercritiche, alvei meandriformi, "
+        "o per gruppi di pile dev'essere valutata caso per caso.",
+        "La formula CSU/HEC-18 applica un limite massimo per pile a naso arrotondato "
+        "allineate al flusso: ys <= 2.4a per Fr <= 0.8, ys <= 3.0a per Fr > 0.8.",
+        "I coefficienti K1...K4 sono definiti per condizioni specifiche; valori al di "
+        "fuori degli intervalli raccomandati da HEC-18 richiedono giustificazione idraulica.",
+        "Lo scalzamento conservativo da usare in progetto e' il valore massimo tra "
+        "tutte le formulazioni, applicando un adeguato margine di sicurezza.",
+        "Il presente software non tiene conto di effetti locali quali deposizione "
+        "a monte, erosione generale dell'alveo, o interazione con altri ostacoli idraulici.",
+    ]
+    for item in disclaimer_items:
         txt = "- " + item.encode("latin-1", "replace").decode("latin-1")
         pdf.multi_cell(0, 5, txt)
+        pdf.ln(2)
+    pdf.ln(2)
+
+    # ===== 9. RIFERIMENTI BIBLIOGRAFICI =====
+    _pdf_sezione(pdf, "9. Riferimenti bibliografici")
+    pdf.set_font("Helvetica", "", 8)
+    riferimenti = [
+        "[1] Richardson, E.V., Davis, S.R. (2001). Evaluating Scour at Bridges, "
+        "HEC-18, 4th ed., FHWA, U.S. DOT.",
+        "[2] Arneson, L.A. et al. (2012). Evaluating Scour at Bridges, HEC-18, "
+        "5th ed., FHWA-HIF-12-003.",
+        "[3] Melville, B.W., Coleman, S.E. (2000). Bridge Scour, Water Resources "
+        "Publications, LLC.",
+        "[4] EN 1997-1:2004 (Eurocodice 7). Progettazione geotecnica - Parte 1: "
+        "Regole generali. CEN, Bruxelles.",
+        "[5] AASHTO (2020). LRFD Bridge Design Specifications, 9th ed.",
+        "[6] Raudkivi, A.J. (1998). Loose Boundary Hydraulics, Balkema, 4th ed.",
+        "[7] Breusers, H.N.C., Nicollet, G., Shen, H.W. (1977). Local scour around "
+        "cylindrical piers. J. Hydraulic Research, 15(3), 211-252.",
+    ]
+    for rif in riferimenti:
+        pdf.multi_cell(0, 5, rif.encode("latin-1", "replace").decode("latin-1"))
         pdf.ln(1)
 
     return pdf.output()

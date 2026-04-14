@@ -1,0 +1,49 @@
+{
+  "nome": "Sensitivita - Punto di transizione clear-water / live-bed",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), §3.1 e §6.2 — Analisi di sensitivita alla velocita",
+  "input": {
+    "larghezza_pila": 1.5,
+    "lunghezza_pila": 6.0,
+    "tirante_monte": 3.0,
+    "velocita_monte": 0.743379975253946,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 1.0,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "V_c": {
+      "valore": 0.743380,
+      "unita": "m/s",
+      "nota": "Velocita critica calcolata con precisione浮点"
+    },
+    "V_su_Vc": {
+      "valore": 1.0,
+      "unita": "-",
+      "nota": "Transizione esatta tra clear-water e live-bed (V ≈ V_c)"
+    },
+    "regime": {
+      "valore": "Live-bed (trasporto generalizzato)",
+      "nota": "Alla transizione V = V_c il codice restituisce 'Live-bed' perche' V >= V_c (confronto non stretto). Questo e' il comportamento atteso della funzione classificazione_regime() che usa V > V_c. Nota: in questo caso V e V_c sono quasi identici per arrotondamento浮点e il regime e' sensitivo alla precisione."
+    },
+    "K_I_melville": {
+      "valore": 1.0,
+      "unita": "-",
+      "nota": "min(1, V/V_c) = min(1, 1.0) = 1.0"
+    },
+    "ys_MC": {
+      "valore": 2.449490,
+      "unita": "m",
+      "nota": "Massimo per Melville & Coleman: K_I raggiunge 1.0"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "Caso al limite di transizione V = V_c. Impostando velocita_monte al valore esatto di V_c calcolato dalla formula (6.19 * 3.0^(1/6) * 0.001^(1/3)), il risultato V/V_c e' esattamente 1.0 entro la precisione浮点e il regime viene classificato come 'Live-bed' perche' V >= V_c. In pratica, questo punto e' instabile e piccole variazioni di input possono cambiare la classificazione."
+}

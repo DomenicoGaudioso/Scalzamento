@@ -1,0 +1,50 @@
+{
+  "nome": "CSU/HEC-18 limite round nose - Limite 3.0a attivo (Fr > 0.8)",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), §6.3 — Limite massimo per pila a naso arrotondato con Fr > 0.8",
+  "input": {
+    "larghezza_pila": 1.0,
+    "lunghezza_pila": 6.0,
+    "tirante_monte": 2.0,
+    "velocita_monte": 4.0,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.3,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 0.5,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "Fr": {
+      "valore": 0.903047,
+      "unita": "-",
+      "formula": "4.0 / sqrt(9.81*2)"
+    },
+    "ys_CSU": {
+      "valore": 3.171680,
+      "unita": "m",
+      "formula": "2 * 1.0 * 1.0 * 1.3 * 1.0 * 1.0^0.65 * 2.0^0.35 * 0.903047^0.43"
+    },
+    "ys_a_ratio": {
+      "valore": 3.171680,
+      "unita": "-",
+      "formula": "ys_CSU / a = 3.172 / 1.0"
+    },
+    "limite_3_0a": {
+      "valore": 3.0,
+      "unita": "m",
+      "formula": "3.0 * a = 3.0 * 1.0 (Fr > 0.8)"
+    },
+    "ys_limited": {
+      "valore": 3.0,
+      "unita": "m",
+      "nota": "Limite 3.0a applicato perche' ys/a=3.172 > 3.0 e Fr=0.903 > 0.8"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "Caso con Fr > 0.8 (subcritico prossimo al critico) in cui il limite 3.0a si applica. K3=1.3 (dune grandi) aumenta significativamente lo scalzamento."
+}

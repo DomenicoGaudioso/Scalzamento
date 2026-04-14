@@ -1,0 +1,44 @@
+{
+  "nome": "K2 automatico - Diversi angoli di attacco (0, 15, 30, 45, 90 gradi)",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), Eq. 6.4 — K2 = (cos(theta) + L/a * sin(theta))^0.65",
+  "input": {
+    "larghezza_pila": 1.5,
+    "lunghezza_pila": 6.0,
+    "casi_angolo": [
+      {"angolo_gradi": 0, "K2_atteso": 1.000000},
+      {"angolo_gradi": 15, "K2_atteso": 1.569781},
+      {"angolo_gradi": 30, "K2_atteso": 1.982586},
+      {"angolo_gradi": 45, "K2_atteso": 2.272457},
+      {"angolo_gradi": 90, "K2_atteso": 2.462289}
+    ]
+  },
+  "output_atteso": {
+    "L_su_a": {
+      "valore": 4.0,
+      "unita": "-",
+      "formula": "6 / 1.5 = 4.0 (min(12, 4) = 4)"
+    },
+    "K2_angolo_0": {
+      "valore": 1.000000,
+      "formula": "(cos(0) + 4*sin(0))^0.65 = 1^0.65 = 1.0"
+    },
+    "K2_angolo_15": {
+      "valore": 1.569781,
+      "formula": "(cos(15) + 4*sin(15))^0.65 = (0.96593 + 1.03528)^0.65 = 2.00121^0.65"
+    },
+    "K2_angolo_30": {
+      "valore": 1.982586,
+      "formula": "(cos(30) + 4*sin(30))^0.65 = (0.86603 + 2.0)^0.65 = 2.86603^0.65"
+    },
+    "K2_angolo_45": {
+      "valore": 2.272457,
+      "formula": "(cos(45) + 4*sin(45))^0.65 = (0.70711 + 2.82843)^0.65 = 3.53553^0.65"
+    },
+    "K2_angolo_90": {
+      "valore": 2.462289,
+      "formula": "(cos(90) + 4*sin(90))^0.65 = (0 + 4)^0.65 = 4^0.65"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "K2 cresce monotonicamente con l'angolo. Per L/a=4, K2 va da 1.0 (allineato) a 2.46 (perpendicolare). L'aumento e' particolarmente rapido per angoli tra 0 e 30 gradi."
+}

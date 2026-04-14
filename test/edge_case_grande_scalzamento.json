@@ -1,0 +1,59 @@
+{
+  "nome": "Edge case - Grande scalzamento (K3=1.3, K2=2.27, angolo=45 gradi, naso quadrato)",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012) — Condizioni combinate peggiori",
+  "input": {
+    "larghezza_pila": 2.0,
+    "lunghezza_pila": 8.0,
+    "tirante_monte": 4.0,
+    "velocita_monte": 3.5,
+    "angolo_attacco_gradi": 45.0,
+    "forma_naso": "naso quadrato",
+    "usa_k2_automatico": true,
+    "k1": 1.1,
+    "k2": 1.0,
+    "k3": 1.3,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 0.5,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "Fr": {
+      "valore": 0.558732,
+      "unita": "-",
+      "formula": "3.5 / sqrt(9.81*4)"
+    },
+    "K2_effettivo": {
+      "valore": 2.272457,
+      "unita": "-",
+      "formula": "(cos(45) + 4*sin(45))^0.65 = 3.53553^0.65"
+    },
+    "V_c": {
+      "valore": 0.619000,
+      "unita": "m/s",
+      "formula": "6.19 * 4^(1/6) * 0.0005^(1/3)"
+    },
+    "ys_CSU": {
+      "valore": 12.898815,
+      "unita": "m",
+      "formula": "2 * 1.1 * 2.272 * 1.3 * 1.0 * 2^0.65 * 4^0.35 * 0.5587^0.43"
+    },
+    "ys_limited": {
+      "valore": 12.898815,
+      "unita": "m",
+      "nota": "Nessun limite: forma naso quadrato e angolo != 0"
+    },
+    "ys_MC": {
+      "valore": 3.265986,
+      "unita": "m"
+    },
+    "ys_fatt": {
+      "valore": 3.0,
+      "unita": "m",
+      "formula": "1.50 * 2.0"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "Combinazione peggiore: naso quadrato (K1=1.1), forte angolo (K2=2.27), dune grandi (K3=1.3), sedimento fine (D50=0.5mm). ys_CSU = 12.9 m e' molto superiore a ys_MC = 3.27 m e ys_fatt = 3.0 m. Lo spread e enorme (9.9 m, 77%)."
+}

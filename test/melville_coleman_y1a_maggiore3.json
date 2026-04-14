@@ -1,0 +1,50 @@
+{
+  "nome": "Melville & Coleman (2000) - Acqua profonda (y1/a >= 3, K_yb=1.0)",
+  "rif_bibliografico": "Melville & Coleman (2000), Bridge Scour, Cap. 3 — K_yb = 1.0 per y1/a >= 3",
+  "input": {
+    "larghezza_pila": 1.0,
+    "lunghezza_pila": 4.0,
+    "tirante_monte": 5.0,
+    "velocita_monte": 1.5,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 2.0,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "y1_su_a": {
+      "valore": 5.0,
+      "unita": "-",
+      "formula": "5.0 / 1.0 = 5.0 >= 3"
+    },
+    "K_yb": {
+      "valore": 1.0,
+      "unita": "-",
+      "formula": "K_yb = 1.0 per y1/a >= 3 (flusso profondo)"
+    },
+    "V_c": {
+      "valore": 1.019833,
+      "unita": "m/s",
+      "formula": "6.19 * 5^(1/6) * 0.002^(1/3)"
+    },
+    "K_I": {
+      "valore": 1.0,
+      "unita": "-",
+      "formula": "min(1, 1.5/1.019833) = min(1, 1.471) = 1.0"
+    },
+    "ys_MC": {
+      "valore": 2.0,
+      "unita": "m",
+      "formula": "2 * 1.0 * 1.0 * 1.0 = 2.0"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "Per y1/a >= 3 la pila e' completamente sommersa e il fattore geometrico K_yb raggiunge il massimo di 1.0. ys_MC = 2*a = 2.0 m e' lo scalzamento massimo teorico per Melville & Coleman."
+}

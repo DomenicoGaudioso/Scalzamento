@@ -1,0 +1,43 @@
+{
+  "nome": "Velocita critica incipiente HEC-18 - Diversi valori di y1 e D50",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), Eq. 3.1 — V_c = 6.19 * y1^(1/6) * D50^(1/3)",
+  "input": {
+    "casi_di_test": [
+      {
+        "y1_m": 3.0,
+        "D50_mm": 1.0,
+        "V_c_atteso": 0.743380,
+        "formula": "6.19 * 3^(1/6) * 0.001^(1/3) = 6.19 * 1.20094 * 0.1"
+      },
+      {
+        "y1_m": 5.0,
+        "D50_mm": 2.0,
+        "V_c_atteso": 1.019833,
+        "formula": "6.19 * 5^(1/6) * 0.002^(1/3) = 6.19 * 1.30766 * 0.12599"
+      },
+      {
+        "y1_m": 1.0,
+        "D50_mm": 0.5,
+        "V_c_atteso": 0.491301,
+        "formula": "6.19 * 1.0^(1/6) * 0.0005^(1/3) = 6.19 * 1.0 * 0.07937"
+      },
+      {
+        "y1_m": 10.0,
+        "D50_mm": 5.0,
+        "V_c_atteso": 1.553629,
+        "formula": "6.19 * 10^(1/6) * 0.005^(1/3) = 6.19 * 1.46780 * 0.17073"
+      },
+      {
+        "y1_m": 0.5,
+        "D50_mm": 0.2,
+        "V_c_atteso": 0.322499,
+        "formula": "6.19 * 0.5^(1/6) * 0.0002^(1/3)"
+      }
+    ]
+  },
+  "output_atteso": {
+    "nota": "I valori attesi sono nella lista casi_di_test sopra. Ogni V_c_atteso e' calcolato con V_c = 6.19 * y1^(1/6) * (D50/1000)^(1/3)."
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "Verifica della formula V_c per 5 combinazioni di y1 e D50. V_c cresce con y1 (dipendenza debole: y1^(1/6)) e con D50 (dipendenza D50^(1/3)). Sedimento piu fine => V_c piu bassa => piu facile live-bed."
+}

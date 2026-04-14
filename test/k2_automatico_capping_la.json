@@ -1,0 +1,28 @@
+{
+  "nome": "K2 automatico - Capping L/a a 12 e angolo elevato",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), §6.4 — L/a cappato a 12 nella formula K2",
+  "input": {
+    "larghezza_pila": 1.5,
+    "lunghezza_pila": 20.0,
+    "angolo_attacco_gradi": 30.0
+  },
+  "output_atteso": {
+    "L_su_a_effettivo": {
+      "valore": 13.333,
+      "unita": "-",
+      "formula": "20 / 1.5 = 13.333"
+    },
+    "L_su_a_cappato": {
+      "valore": 12.0,
+      "unita": "-",
+      "formula": "min(12, 13.333) = 12"
+    },
+    "K2": {
+      "valore": 3.498312,
+      "unita": "-",
+      "formula": "(cos(30) + 12*sin(30))^0.65 = (0.86603 + 6.0)^0.65 = 6.86603^0.65"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "Quando L/a > 12, il valore viene cappato a 12 per evitare sovrastima di K2. Per L/a=13.33 e angolo=30 gradi, K2=3.498. Senza capping sarebbe stato ancora piu alto."
+}

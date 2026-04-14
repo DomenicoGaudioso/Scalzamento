@@ -1,0 +1,40 @@
+{
+  "nome": "Edge case - K4 armoring (K4 = 0.7, riduzione scalzamento)",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), §6.5 — Fattore armoring K4 per fondo con ghiaia grossa",
+  "input": {
+    "larghezza_pila": 1.5,
+    "lunghezza_pila": 6.0,
+    "tirante_monte": 3.0,
+    "velocita_monte": 2.0,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 0.7,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 1.0,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "ys_CSU": {
+      "valore": 1.917015,
+      "unita": "m",
+      "formula": "0.7 * 2.738593 (K4 moltiplicativo)"
+    },
+    "ys_limited": {
+      "valore": 1.917015,
+      "unita": "m",
+      "nota": "Nessun limite applicato: ys/a = 1.278 < 2.4"
+    },
+    "rapporto_con_K4_1": {
+      "valore": 0.7,
+      "unita": "-",
+      "nota": "ys(K4=0.7) / ys(K4=1.0) = 1.917 / 2.739 = 0.70"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "K4 = 0.7 riduce lo scalzamento del 30%. L'armoring si verifica quando uno strato di ghiaia grossa protegge il substrato piu fine. Richiede documentazione rigorosa dell'analisi granulometrica."
+}

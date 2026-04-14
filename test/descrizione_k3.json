@@ -1,0 +1,19 @@
+{
+  "nome": "Descrizione coefficiente K3 - Classificazione condizioni del fondo",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), Tabella 6.2 — Condizioni del fondo e K3",
+  "input": {
+    "casi_K3": [
+      {"K3": 1.0, "descrizione_attesa": "clear-water / plane bed / antidune"},
+      {"K3": 1.1, "descrizione_attesa": "clear-water / plane bed / antidune"},
+      {"K3": 1.15, "descrizione_attesa": "dune medie"},
+      {"K3": 1.2, "descrizione_attesa": "dune medie"},
+      {"K3": 1.3, "descrizione_attesa": "dune grandi o condizioni piu' penalizzanti"},
+      {"K3": 1.5, "descrizione_attesa": "dune grandi o condizioni piu' penalizzanti"}
+    ]
+  },
+  "output_atteso": {
+    "nota": "La funzione descrizione_coeff_k3() classifica: K3 <= 1.10 -> clear-water/plane bed; 1.10 < K3 <= 1.20 -> dune medie; K3 > 1.20 -> dune grandi."
+  },
+  "toleranza_percentuale": 0.0,
+  "note": "Verifica della classificazione testuale del coefficiente K3. I valori tipici HEC-18 sono: plane bed=1.1, dune medie=1.1-1.2, dune grandi=1.3+. La soglia nella verifica normativa e K3 <= 1.10 per 'OK'."
+}

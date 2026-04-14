@@ -1,0 +1,47 @@
+{
+  "nome": "Edge case - Sedimento molto fine (D50 = 0.1 mm, sabbia fine)",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), §3.1 — Effetto del sedimento fine sulla velocita critica",
+  "input": {
+    "larghezza_pila": 1.5,
+    "lunghezza_pila": 6.0,
+    "tirante_monte": 3.0,
+    "velocita_monte": 1.5,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 0.1,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "V_c": {
+      "valore": 0.345046,
+      "unita": "m/s",
+      "formula": "6.19 * 3^(1/6) * 0.0001^(1/3) = 6.19 * 1.20094 * 0.04642"
+    },
+    "V_su_Vc": {
+      "valore": 4.347241,
+      "unita": "-",
+      "nota": "V/V_c molto alto: live-bed intenso"
+    },
+    "regime": {
+      "valore": "Live-bed (trasporto generalizzato)"
+    },
+    "ys_CSU": {
+      "valore": 2.419935,
+      "unita": "m"
+    },
+    "ys_MC": {
+      "valore": 2.449490,
+      "unita": "m",
+      "nota": "K_I = 1.0 (cappato), K_yb = sqrt(2/3) = 0.8165"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "Sedimento molto fine (D50 = 0.1 mm): V_c molto bassa (0.345 m/s), il regime e live-bed per qualsiasi velocita realistica. ys_CSU e ys_MC sono molto simili (~2.4 m)."
+}

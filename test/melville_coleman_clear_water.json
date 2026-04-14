@@ -1,0 +1,54 @@
+{
+  "nome": "Melville & Coleman (2000) - Regime clear-water",
+  "rif_bibliografico": "Melville & Coleman (2000), Bridge Scour, Cap. 3 — Formula semplificata ys = 2*K_yb*K_I*a",
+  "input": {
+    "larghezza_pila": 1.5,
+    "lunghezza_pila": 6.0,
+    "tirante_monte": 3.0,
+    "velocita_monte": 0.5,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 2.0,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "V_c": {
+      "valore": 0.936600,
+      "unita": "m/s",
+      "formula": "6.19 * 3^(1/6) * 0.002^(1/3)"
+    },
+    "V_su_Vc": {
+      "valore": 0.533846,
+      "unita": "-",
+      "formula": "0.5 / 0.936600"
+    },
+    "regime": {
+      "valore": "Clear-water (senza trasporto)",
+      "formula": "V < V_c"
+    },
+    "K_yb": {
+      "valore": 0.816497,
+      "unita": "-",
+      "formula": "sqrt(y1/(3*a)) = sqrt(3/(3*1.5)) = sqrt(2/3)"
+    },
+    "K_I": {
+      "valore": 0.533846,
+      "unita": "-",
+      "formula": "min(1, V/V_c) = 0.5/0.9366"
+    },
+    "ys_MC": {
+      "valore": 1.307650,
+      "unita": "m",
+      "formula": "2 * 0.816497 * 0.533846 * 1.5"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "Regime clear-water: K_I = V/V_c < 1, lo scalzamento e' proporzionale alla velocita'. ys_MC e' significativamente inferiore rispetto al caso live-bed."
+}

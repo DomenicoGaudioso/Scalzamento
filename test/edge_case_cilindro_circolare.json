@@ -1,0 +1,39 @@
+{
+  "nome": "Edge case - Cilindro circolare e limite round nose",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), Tabella 6.1 — K1=1.0 per cilindro circolare",
+  "input": {
+    "larghezza_pila": 1.5,
+    "lunghezza_pila": 6.0,
+    "tirante_monte": 3.0,
+    "velocita_monte": 2.0,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "cilindro circolare",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 1.0,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "K1": {
+      "valore": 1.0,
+      "nota": "Cilindro circolare: K1 = 1.0 (come naso arrotondato)"
+    },
+    "ys_CSU": {
+      "valore": 2.738593,
+      "unita": "m",
+      "nota": "Identico al caso naso arrotondato perche' K1 e K2 sono gli stessi"
+    },
+    "ys_limited": {
+      "valore": 2.738593,
+      "unita": "m",
+      "nota": "Il limite round nose NON si applica perche' forma_naso != 'naso arrotondato' (codice: check su stringa esatta)"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "Il cilindro circolare ha K1 = 1.0 (identico al naso arrotondato) ma il limite HEC-18 (2.4a/3.0a) NON viene applicato perche' il codice controlla forma_naso == 'naso arrotondato' esplicitamente. Questo e' un comportamento rilevante da verificare."
+}

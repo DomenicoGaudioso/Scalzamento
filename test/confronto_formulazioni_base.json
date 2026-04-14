@@ -1,0 +1,84 @@
+{
+  "nome": "Confronto formulazioni - Riepilogo completo per caso base",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012) e Melville & Coleman (2000) — Confronto multi-formula",
+  "input": {
+    "larghezza_pila": 1.5,
+    "lunghezza_pila": 6.0,
+    "tirante_monte": 3.0,
+    "velocita_monte": 2.0,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 1.0,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "sintesi_Fr": {
+      "valore": 0.368668,
+      "unita": "-"
+    },
+    "sintesi_a_y1": {
+      "valore": 0.5,
+      "unita": "-"
+    },
+    "sintesi_L_a": {
+      "valore": 4.0,
+      "unita": "-"
+    },
+    "sintesi_K2_eff": {
+      "valore": 1.0,
+      "unita": "-"
+    },
+    "sintesi_V_c": {
+      "valore": 0.743380,
+      "unita": "m/s"
+    },
+    "sintesi_V_Vc": {
+      "valore": 2.690414,
+      "unita": "-"
+    },
+    "sintesi_regime": {
+      "valore": "Live-bed (trasporto generalizzato)"
+    },
+    "report_CSU_ys": {
+      "valore": 2.7386,
+      "unita": "m",
+      "formula": "csu_hec18()"
+    },
+    "report_CSU_lim_ys": {
+      "valore": 2.7386,
+      "unita": "m",
+      "formula": "csu_hec18_con_limite_round_nose()"
+    },
+    "report_MC_ys": {
+      "valore": 2.4495,
+      "unita": "m",
+      "formula": "melville_coleman_2000()"
+    },
+    "report_fatt_ys": {
+      "valore": 2.25,
+      "unita": "m",
+      "formula": "fattoriale_utente()"
+    },
+    "sintesi_ys_max": {
+      "valore": 2.7386,
+      "unita": "m"
+    },
+    "sintesi_ys_min": {
+      "valore": 2.25,
+      "unita": "m"
+    },
+    "sintesi_spread": {
+      "valore": 0.4886,
+      "unita": "m"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "Riepilogo completo di calcola_report() e sintesi_indicatori() per il caso base. L'ordinamento deve essere per ys decrescente: CSU (2.74) > CSU_lim (2.74) > MC (2.45) > Fatt (2.25). Spread = 0.49 m (17.8%)."
+}

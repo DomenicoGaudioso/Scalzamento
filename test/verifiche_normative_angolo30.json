@@ -1,0 +1,45 @@
+{
+  "nome": "Verifiche normative - Angolo di attacco 30 gradi (NON VERIFICATO per K2 e ys/a)",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), Cap. 6 — Verifica K2 e ys/a con angolo significativo",
+  "input": {
+    "larghezza_pila": 1.5,
+    "lunghezza_pila": 6.0,
+    "tirante_monte": 3.0,
+    "velocita_monte": 2.0,
+    "angolo_attacco_gradi": 30.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 1.0,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "verifica_3_angolo": {
+      "valore_calcolato": "30.0 gradi",
+      "esito": "NON OK",
+      "nota": "Angolo > 15 gradi"
+    },
+    "verifica_5_K2": {
+      "valore_calcolato": "1.9826",
+      "esito": "NON OK",
+      "nota": "K2 = 1.983 > 1.5"
+    },
+    "verifica_6_ys_a": {
+      "valore_calcolato": "3.6197",
+      "esito": "NON OK",
+      "nota": "ys/a = 3.62 > 3.0"
+    },
+    "verifica_10_spread": {
+      "valore_calcolato": "3.1795 m (58.6%)",
+      "esito": "ATTENZIONE",
+      "nota": "Spread molto alto tra formulazioni"
+    }
+  },
+  "toleranza_percentuale": 2.0,
+  "note": "Angolo 30 gradi genera K2=1.983, ys/a=3.62 e 3 verifiche NON OK (angolo, K2, ys/a). Spread 59% indica incertezza significativa."
+}

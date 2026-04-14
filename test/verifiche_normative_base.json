@@ -1,0 +1,74 @@
+{
+  "nome": "Verifiche normative - Caso base (tutte VERIFICATO o INFO)",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), Cap. 6 — Criteri di verifica per scalzamento locale",
+  "input": {
+    "larghezza_pila": 1.5,
+    "lunghezza_pila": 6.0,
+    "tirante_monte": 3.0,
+    "velocita_monte": 2.0,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 1.0,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "verifica_1_Fr": {
+      "valore_calcolato": "0.3687",
+      "esito": "OK",
+      "nota": "Fr < 0.80: moto subcritico"
+    },
+    "verifica_2_regime": {
+      "valore_calcolato": "2.6904",
+      "esito": "ATTENZIONE",
+      "nota": "Live-bed: V/V_c > 1"
+    },
+    "verifica_3_angolo": {
+      "valore_calcolato": "0.0 gradi",
+      "esito": "OK",
+      "nota": "Angolo <= 5 gradi"
+    },
+    "verifica_4_a_y1": {
+      "valore_calcolato": "0.5000",
+      "esito": "OK",
+      "nota": "a/y1 <= 0.80"
+    },
+    "verifica_5_K2": {
+      "valore_calcolato": "1.0000",
+      "esito": "OK",
+      "nota": "K2 <= 1.0"
+    },
+    "verifica_6_ys_a": {
+      "valore_calcolato": "1.8257",
+      "esito": "OK",
+      "nota": "ys/a <= 2.4"
+    },
+    "verifica_7_K4": {
+      "valore_calcolato": "1.000",
+      "esito": "OK",
+      "nota": "K4 = 1.0, nessuna riduzione"
+    },
+    "verifica_8_K3": {
+      "valore_calcolato": "1.100 (clear-water / plane bed / antidune)",
+      "esito": "OK",
+      "nota": "K3 <= 1.10"
+    },
+    "verifica_9_ys_conservativo": {
+      "valore_calcolato": "2.7386 m",
+      "esito": "INFO"
+    },
+    "verifica_10_spread": {
+      "valore_calcolato": "0.4886 m (17.8%)",
+      "esito": "OK",
+      "nota": "Spread < 30%: buona coerenza"
+    }
+  },
+  "toleranza_percentuale": 2.0,
+  "note": "Caso base con Fr subcritico, pila allineata, rapporto a/y1 nella norma. Unica attenzione: regime live-bed (ATTENZIONE alla verifica 2)."
+}

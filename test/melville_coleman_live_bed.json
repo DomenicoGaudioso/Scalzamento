@@ -1,0 +1,52 @@
+{
+  "nome": "Melville & Coleman (2000) - Regime live-bed (K_I cappato a 1)",
+  "rif_bibliografico": "Melville & Coleman (2000), Bridge Scour, Cap. 3 — K_I cappato a 1.0 in live-bed",
+  "input": {
+    "larghezza_pila": 1.5,
+    "lunghezza_pila": 6.0,
+    "tirante_monte": 3.0,
+    "velocita_monte": 2.0,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 1.0,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "V_c": {
+      "valore": 0.743380,
+      "unita": "m/s"
+    },
+    "V_su_Vc": {
+      "valore": 2.690414,
+      "unita": "-"
+    },
+    "regime": {
+      "valore": "Live-bed (trasporto generalizzato)",
+      "formula": "V > V_c"
+    },
+    "K_yb": {
+      "valore": 0.816497,
+      "unita": "-",
+      "formula": "sqrt(2/3)"
+    },
+    "K_I": {
+      "valore": 1.0,
+      "unita": "-",
+      "formula": "min(1, V/V_c) = min(1, 2.69) = 1.0"
+    },
+    "ys_MC": {
+      "valore": 2.449490,
+      "unita": "m",
+      "formula": "2 * 0.816497 * 1.0 * 1.5"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "In regime live-bed, K_I viene cappato a 1.0 (approssimazione conservativa). ys_MC e' quindi 2*K_yb*a = 2*sqrt(2/3)*1.5 = 2.449 m."
+}

@@ -1,0 +1,34 @@
+{
+  "nome": "Edge case - Limite round nose disabilitato (applica_limite_round_nose = false)",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), §6.3 — Opzione di disabilitare il limite",
+  "input": {
+    "larghezza_pila": 1.0,
+    "lunghezza_pila": 6.0,
+    "tirante_monte": 6.0,
+    "velocita_monte": 2.5,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 1.0,
+    "applica_limite_round_nose": false,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 0.5,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "ys_CSU": {
+      "valore": 2.543188,
+      "unita": "m"
+    },
+    "ys_limited": {
+      "valore": 2.543188,
+      "unita": "m",
+      "nota": "Limite NON applicato perche' applica_limite_round_nose = false. ys_limited = ys_CSU anche se ys/a = 2.543 > 2.4"
+    }
+  },
+  "toleranza_percentuale": 1.0,
+  "note": "Con applica_limite_round_nose = false, il limite HEC-18 non viene applicato nemmeno per naso arrotondato allineato. Utile per confronto o per calcoli cautelativi senza capping."
+}

@@ -1,0 +1,45 @@
+{
+  "nome": "Verifiche normative - Moto supercritico e pila larga (NON VERIFICATO multiplo)",
+  "rif_bibliografico": "HEC-18 (Arneson et al., 2012), Cap. 6 — Criteri di verifica per condizioni critiche",
+  "input": {
+    "larghezza_pila": 1.5,
+    "lunghezza_pila": 6.0,
+    "tirante_monte": 0.5,
+    "velocita_monte": 3.0,
+    "angolo_attacco_gradi": 0.0,
+    "forma_naso": "naso arrotondato",
+    "usa_k2_automatico": true,
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.1,
+    "k4": 1.0,
+    "applica_limite_round_nose": true,
+    "k_total_fattoriale": 1.50,
+    "D50_mm": 1.0,
+    "Ss": 2.65
+  },
+  "output_atteso": {
+    "verifica_1_Fr": {
+      "valore_calcolato": "1.3546",
+      "esito": "NON OK",
+      "nota": "Fr > 1: moto supercritico"
+    },
+    "verifica_2_regime": {
+      "valore_calcolato": "5.4400",
+      "esito": "ATTENZIONE",
+      "nota": "Live-bed con V/V_c molto alto"
+    },
+    "verifica_4_a_y1": {
+      "valore_calcolato": "3.0000",
+      "esito": "NON OK",
+      "nota": "a/y1 = 3.0 > 2.0: pila molto larga rispetto al tirante"
+    },
+    "verifica_10_spread": {
+      "valore_calcolato": "1.5597 m (60.9%)",
+      "esito": "ATTENZIONE",
+      "nota": "Spread > 30%: forte incertezza tra formulazioni"
+    }
+  },
+  "toleranza_percentuale": 2.0,
+  "note": "Caso con Fr > 1 (supercritico) e a/y1 = 3 (pila molto larga). Due verifiche NON OK (Froude e a/y1). Spread 61% indica grande incertezza tra CSU e M&C."
+}
